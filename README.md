@@ -1,1 +1,1 @@
-# insightedge-pyhton-demo
+# insightedge-pyth1on-demo
