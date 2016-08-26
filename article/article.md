@@ -1,6 +1,6 @@
 
 ### Intro & Use case
-In this post we will show how to you can use InsightEdge to do a real time prediction for flights delay. We will use a solution based on a decision tree algorithm described by Carol McDonald in her MapR [blog post](https://www.mapr.com/blog/apache-spark-machine-learning-tutorial) and will try to improve it to give us more accurate prediction.
+In this post we will show how to you can use InsightEdge to do a real time prediction for flights delay. We will create a solution based on a decision tree algorithm described by Carol McDonald in her MapR [blog post](https://www.mapr.com/blog/apache-spark-machine-learning-tutorial).
  
 Why would you do a flight delay prediction? For clients it gives a more accurate expectation about flight time thus gives an ability to plan their time accordingly. For airlines companies it shows where they can minimize flight delays thereby minimize expenses and increase customers satisfaction.  
 
