@@ -22,7 +22,7 @@ if __name__ == "__main__":
     ssc = StreamingContext(sc, 3)
     sqlc = SQLContext(sc)
 
-    text_rdd = sc.textFile("/code/insightedge-pyhton-demo/data/rita2014jan.csv")
+    text_rdd = sc.textFile("/code/insightedge-pyhton-demo/data/flights_jan_2014.csv")
     all_flights_rdd = text_rdd.map(lambda r: Utils.parse_flight(r))
 
     carrier_mapping = dict(all_flights_rdd.map(lambda flight: flight.carrier).distinct().zipWithIndex().collect())

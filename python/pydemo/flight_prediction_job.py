@@ -24,11 +24,27 @@ gridDf = sqlContext.read.format("org.apache.spark.sql.insightedge").option("coll
 gridDf.registerTempTable("FlightWithPrediction")
 
 %sql
+select count(*)
+from FlightWithPrediction
+where prediction = actual
+
+%sql
+select count(*)
+from FlightWithPrediction
+where prediction <> actual
+
+%sql
 select
-    (case when prediction = real then 'Correct' ELSE 'Incorrect' END) as predicted,
+    (case when prediction = actual then 'Correct' ELSE 'Incorrect' END) as predicted,
     count(prediction) as count
 from FlightWithPrediction
 group by prediction, actual
+
+%sql
+select day_of_month as day, origin, destination, distance, carrier,
+departure_delay_minutes as actual_delay_minutes,
+(case when prediction = actual then 'Correct' ELSE 'Incorrect' END) as prediction
+FROM FlightWithPrediction
 
 '''
 
@@ -66,7 +82,7 @@ if __name__ == "__main__":
     sqlc = SQLContext(sc)
 
     zkQuorum = "localhost:2181"
-    topic = "test"
+    topic = "python-blog"
 
     loaded_model = Utils.load_model_from_grid(sc)
     model = DecisionTreeModel(loaded_model)
