@@ -35,13 +35,12 @@ if __name__ == "__main__":
 
     splits = text_rdd.randomSplit([0.7, 0.3])
     (training_rdd, test_rdd) = (splits[0], splits[1])
-    training_data = training_rdd.map(lambda r: Utils.parse_flight(r)) \
-        .map(lambda rdd: Utils.create_labeled_point(rdd, carrier_mapping, origin_mapping, destination_mapping))
+    training_data = training_rdd.map(Utils.parse_flight).map(lambda rdd: Utils.create_labeled_point(rdd, carrier_mapping, origin_mapping, destination_mapping))
 
     classes_count = 2
     impurity = "gini"
     max_depth = 9
-    max_bins = 1000 #7000
+    max_bins = 7000
     model = DecisionTree.trainClassifier(training_data, classes_count, categorical_features_info,
                                          impurity, max_depth, max_bins)
 

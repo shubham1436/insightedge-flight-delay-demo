@@ -1,5 +1,3 @@
-
-### Intro & Use case
 In this post we will show how to you can use InsightEdge to do a real time prediction for flights delay.
 We will create a solution based on a decision tree algorithm described by Carol McDonald in her MapR [blog post](https://www.mapr.com/blog/apache-spark-machine-learning-tutorial).
  
@@ -15,9 +13,9 @@ The following slide shows us one the possible solutions which suits for our task
 
 ![Architecture](img/architecture.png)
 
-For the hardest part, prediction, we are going to use Spark Machine Learning technology.
+For the hardest part, prediction, we are going to use Spark Machine Learning technology with (decision tree algorithm)[https://spark.apache.org/docs/1.6.0/mllib-decision-tree.html].
 For performing real time predictions we are going to se Spark Streaming technology combined with Apache Kafka which will simulate endless and continuous data flow.
-Streamed data will be processed by decision tree model and results are saved into Data Grid for future usage.
+Streamed data will be processed by a decision tree model and results are saved into InsightEdge data grid for future usage.
 
 The solution consist from two parts(Spark jobs):
 - Model training
@@ -27,12 +25,12 @@ Let's see jobs in details. All code and instructions are available on [github](h
 
 #### 'Model training' Spark job
 
-Model training job is one-time job which designed to do model initial training and store it in the InsightEdge data grid so the model can be used during the second job.
+Model training job is one-time job which designed to do model initial training and store it in the data grid so the model can be used during the second job.
 We won't drill deep into details of machine learning algorithms and decision tree model training, you can familiarize yourself with it in Carol McDonald's blog post which was mentioned earlier.
 
 Job consists of next simple steps:
 
-1. Load data and split it on training and testing part and save testing part for second job usage. We will use the same [data set](https://github.com/InsightEdge/insightedge-python-demo/blob/master/data/flights_jan_2014.csv) as in Carol McDonald's blog. 
+1. Load data, split it on training and testing part, save testing part for second job usage. We will use the same [data set](https://github.com/InsightEdge/insightedge-python-demo/blob/master/data/flights_jan_2014.csv) as in Carol McDonald's blog. 
 ```python
 flight_data_file = ...
 sc = SparkContext(appName="Flight prediction model training")
@@ -43,7 +41,7 @@ splits = text_rdd.randomSplit([0.7, 0.3])
 test_rdd.coalesce(1, True).saveAsTextFile(...)
 ```
 
-2. During second job we will convert flight data into LabeledPoint. For this we will store integer representations of origin, destination and carrier in the data grid.
+2. During the second job we will convert flight data into LabeledPoint so we will need to store integer representations of origin, destination and carrier in the data grid.
 ```python
 all_flights_rdd = text_rdd.map(lambda r: Utils.parse_flight(r))
 
@@ -57,20 +55,24 @@ save_mapping(origin_mapping, DF_SUFFIX + ".OriginMap", sqlc)
 save_mapping(destination_mapping, DF_SUFFIX + ".DestinationMap", sqlc)
 ```
 
-3. Train model and save it to the grid
+3. Last step is to train a model and save it to the data grid
 ```python
-model = DecisionTree.trainClassifier(training_data, classes_count, categorical_features_info,
-                                         impurity, max_depth, max_bins)
+training_data = training_rdd.map(Utils.parse_flight).map(lambda rdd: Utils.create_labeled_point(rdd, carrier_mapping, origin_mapping, destination_mapping))
+classes_count = 2
+impurity = "gini"
+max_depth = 9
+max_bins = 7000
+model = DecisionTree.trainClassifier(training_data, classes_count, categorical_features_info, impurity, max_depth, max_bins)
 Utils.save_model_to_grid(model, sc)
 ```
 
 
 #### 'Flight delay prediction' Spark job
 
-Second Spark job will load model and mappings from the grid, read data from stream and use the model for prediction. Prediction results are stored in the grid alongside with flight data.
+Second Spark job will load model and mappings from the grid, read data from stream and use the model for prediction. Predictions will be stored in the grid alongside with flight data.
 Let's see main steps:
 
-1. Load models and mapping form data grid
+1. Load models and mappings form data grid
 ```python
 sc = SparkContext(appName="Flight delay prediction job")
 model = DecisionTreeModel(Utils.load_model_from_grid(sc))
