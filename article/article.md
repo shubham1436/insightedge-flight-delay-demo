@@ -28,7 +28,7 @@ Let's see jobs in details. All code and instructions are available on [github](h
 #### 'Model training' Spark job
 
 Model training job is one-time job which designed to do model initial training and store it in the InsightEdge data grid so the model can be used during the second job.
-We won't drill deep in details of machine learning algorithms and decision tree model training, you can familiarize yourself with it in Carol McDonald's blog post mentioned earlier.
+We won't drill deep into details of machine learning algorithms and decision tree model training, you can familiarize yourself with it in Carol McDonald's blog post which was mentioned earlier.
 
 Job consists of next simple steps:
 
