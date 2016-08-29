@@ -4,7 +4,6 @@ from pyspark import Row
 from pyspark import SparkContext
 from pyspark.mllib.tree import DecisionTree
 from pyspark.sql import SQLContext
-from pyspark.streaming import StreamingContext
 
 from util.commons import DF_SUFFIX, IE_FORMAT, Utils
 
@@ -19,7 +18,6 @@ def save_mapping(mapping, name, sqlc):
 
 if __name__ == "__main__":
     sc = SparkContext(appName="Insightedge Python API example: train model")
-    ssc = StreamingContext(sc, 3)
     sqlc = SQLContext(sc)
 
     text_rdd = sc.textFile("/code/insightedge-pyhton-demo/data/flights_jan_2014.csv")
@@ -36,8 +34,8 @@ if __name__ == "__main__":
                                  7: len(destination_mapping)}
 
     splits = text_rdd.randomSplit([0.7, 0.3])
-    (text_rdd70, text_rdd30) = (splits[0], splits[1])
-    training_data = text_rdd70.map(lambda r: Utils.parse_flight(r))\
+    (training_rdd, test_rdd) = (splits[0], splits[1])
+    training_data = training_rdd.map(lambda r: Utils.parse_flight(r)) \
         .map(lambda rdd: Utils.create_labeled_point(rdd, carrier_mapping, origin_mapping, destination_mapping))
 
     classes_count = 2
@@ -53,7 +51,7 @@ if __name__ == "__main__":
     save_mapping(destination_mapping, DF_SUFFIX + ".DestinationMap", sqlc)
 
     # Test model
-    test_data = text_rdd30.map(lambda r: Utils.parse_flight(r))\
+    test_data = test_rdd.map(lambda r: Utils.parse_flight(r)) \
         .map(lambda rdd: Utils.create_labeled_point(rdd, carrier_mapping, origin_mapping, destination_mapping))
     predictions = model.predict(test_data.map(lambda x: x.features))
     labelsAndPredictions = test_data.map(lambda lp: lp.label).zip(predictions)
@@ -78,22 +76,3 @@ if __name__ == "__main__":
     # mldata2 = mldata15 + mldata1
     # splits = mldata.randomSplit([0.7, 0.3])
     #(trainingData, testData) = (splits[0], splits[1])
-
-# def save_mapping(carrier_map, origin_map, destination_map, sqlc):
-#     carriers = []
-#     for k, v in carrier_map.iteritems():
-#         carriers.append(Row(key=k, integer_value=v))
-#     carrier_df = sqlc.createDataFrame(carriers)
-#     carrier_df.write.format(IE_FORMAT).mode("overwrite").save(DF_SUFFIX + ".CarrierMap")
-#
-#     origins = []
-#     for k, v in origin_map.iteritems():
-#         origins.append(Row(key=k, integer_value=v))
-#     origin_df = sqlc.createDataFrame(origins)
-#     origin_df.write.format(IE_FORMAT).mode("overwrite").save(DF_SUFFIX + ".OriginMap")
-#
-#     destinations = []
-#     for k, v in destination_map.iteritems():
-#         destinations.append(Row(key=k, integer_value=v))
-#     destination_df = sqlc.createDataFrame(destinations)
-#     destination_df.write.format(IE_FORMAT).mode("overwrite").save(DF_SUFFIX + ".DestinationMap")
