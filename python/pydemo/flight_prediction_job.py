@@ -103,7 +103,7 @@ if __name__ == "__main__":
 
     kvs = KafkaUtils.createStream(ssc, zkQuorum, "spark-streaming-consumer", {topic: 1})
     lines = kvs.map(lambda x: x[1])
-    lines.foreachRDD(lambda rdd: predict_and_save(rdd))
+    lines.foreachRDD(predict_and_save)
 
     ssc.start()
     ssc.awaitTermination()

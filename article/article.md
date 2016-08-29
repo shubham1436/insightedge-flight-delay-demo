@@ -23,7 +23,7 @@ The solution consist from two parts(Spark jobs):
 - Model training
 - Flight delay prediction
 
-Let's see jobs in details. All code is available on [github](https://github.com/InsightEdge/insightedge-python-demo)
+Let's see jobs in details. All code and instructions are available on [github](https://github.com/InsightEdge/insightedge-python-demo)
 
 #### 'Model training' Spark job
 
@@ -86,19 +86,22 @@ destination_mapping = load_mapping(DF_SUFFIX + ".DestinationMap", sqlc)
 ssc = StreamingContext(sc, 3)
 kvs = KafkaUtils.createStream(ssc, zkQuorum, "spark-streaming-consumer", {topic: 1})
 lines = kvs.map(lambda x: x[1])
-lines.foreachRDD(lambda rdd: predict_and_save(rdd, model, carrier_mapping, origin_mapping, destination_mapping))
 ```
 
 3. Final step is to parse bunch of lines(rdd), do a prediction and save it to the data grid 
 ```python
-parsed_flights = rdd.map(Utils.parse_flight)
-labeled_points = parsed_flights.map(lambda flight: Utils.create_labeled_point(flight, carrier_mapping, origin_mapping, destination_mapping))
+lines.foreachRDD(predict_and_save)
 
-predictions = model.predict(labeled_points.map(lambda x: x.features))
-labels_and_predictions = labeled_points.map(lambda lp: lp.label).zip(predictions).zip(parsed_flights)
+def predict_and_save(rdd):
+    if not rdd.isEmpty():
+        parsed_flights = rdd.map(Utils.parse_flight)
+        labeled_points = parsed_flights.map(lambda flight: Utils.create_labeled_point(flight, carrier_mapping, origin_mapping, destination_mapping))
 
-df = sqlc.createDataFrame(labels_and_predictions)
-df.write.format(IE_FORMAT).mode("append").save(DF_SUFFIX + ".FlightWithPrediction")
+        predictions = model.predict(labeled_points.map(lambda x: x.features))
+        labels_and_predictions = labeled_points.map(lambda lp: lp.label).zip(predictions).zip(parsed_flights).map(to_row())
+
+        df = sqlc.createDataFrame(labels_and_predictions)
+        df.write.format(IE_FORMAT).mode("append").save(DF_SUFFIX + ".FlightWithPrediction")
 ```
 
 ### Showing results
