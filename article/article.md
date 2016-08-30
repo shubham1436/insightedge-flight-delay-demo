@@ -29,7 +29,7 @@ We won't drill deep into details of machine learning algorithms and decision tre
 
 Job consists of next simple steps:
 
-1. Load data, split it on training and testing part, save testing part for second job usage. We will use the same [data set](https://github.com/InsightEdge/insightedge-python-demo/blob/master/data/flights_jan_2014.csv) as in Carol McDonald's blog. 
+* Load data, split it on training and testing part, save testing part for second job usage. We will use the same [data set](https://github.com/InsightEdge/insightedge-python-demo/blob/master/data/flights_jan_2014.csv) as in Carol McDonald's blog. 
 ```python
 flight_data_file = ...
 sc = SparkContext(appName="Flight prediction model training")
@@ -39,7 +39,8 @@ splits = text_rdd.randomSplit([0.7, 0.3])
 (training_rdd, test_rdd) = (splits[0], splits[1])
 test_rdd.coalesce(1, True).saveAsTextFile(...)
 ```
-2. During the second job we will convert flight data into LabeledPoint so we will need to store integer representations of origin, destination and carrier in the data grid.
+
+* During the second job we will convert flight data into LabeledPoint so we will need to store integer representations of origin, destination and carrier in the data grid.
 ```python
 all_flights_rdd = text_rdd.map(lambda r: Utils.parse_flight(r))
 
@@ -52,7 +53,8 @@ save_mapping(carrier_mapping, DF_SUFFIX + ".CarrierMap", sqlc)
 save_mapping(origin_mapping, DF_SUFFIX + ".OriginMap", sqlc)
 save_mapping(destination_mapping, DF_SUFFIX + ".DestinationMap", sqlc)
 ```
-3. Last step is to train a model and save it to the data grid
+
+* Last step is to train a model and save it to the data grid
 ```python
 training_data = training_rdd.map(Utils.parse_flight).map(lambda rdd: Utils.create_labeled_point(rdd, carrier_mapping, origin_mapping, destination_mapping))
 classes_count = 2
@@ -69,7 +71,7 @@ Utils.save_model_to_grid(model, sc)
 Second Spark job loads model and mappings from the grid, read data from stream and use the model for prediction. Predictions will be stored in the grid alongside with flight data.
 Let's see main steps:
 
-1. Load models and mappings form data grid
+* Load models and mappings form data grid
 ```python
 sc = SparkContext(appName="Flight delay prediction job")
 model = DecisionTreeModel(Utils.load_model_from_grid(sc))
@@ -79,13 +81,15 @@ carrier_mapping = load_mapping(DF_SUFFIX + ".CarrierMap", sqlc)
 origin_mapping = load_mapping(DF_SUFFIX + ".OriginMap", sqlc)
 destination_mapping = load_mapping(DF_SUFFIX + ".DestinationMap", sqlc)
 ```
-2. Open Kafka stream and parse lines with flight data
+
+* Open Kafka stream and parse lines with flight data
 ```python
 ssc = StreamingContext(sc, 3)
 kvs = KafkaUtils.createStream(ssc, zkQuorum, "spark-streaming-consumer", {topic: 1})
 lines = kvs.map(lambda x: x[1])
 ```
-3. Final step is to parse bunch of lines(rdd), do a prediction and save it to the data grid 
+
+* Final step is to parse bunch of lines(rdd), do a prediction and save it to the data grid 
 ```python
 lines.foreachRDD(predict_and_save)
 
