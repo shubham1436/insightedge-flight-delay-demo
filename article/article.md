@@ -1,12 +1,9 @@
 In this post we will show how to you can use InsightEdge to do a real time prediction for flights delay.
-We will create a solution based on a decision tree algorithm described by Carol McDonald in her MapR [blog post](https://www.mapr.com/blog/apache-spark-machine-learning-tutorial).
- 
 Why would you do a flight delay prediction?
 For clients it gives a more accurate expectation about flight time thus gives an ability to plan their time accordingly.
 For airlines companies it shows where they can minimize flight delays thereby minimize expenses and increase customers satisfaction.  
 
-Building solution on top of the InsightEdge allows it to be distributed and easy scalable...
-
+We will create a solution based on a decision tree algorithm described by Carol McDonald in her MapR [blog post](https://www.mapr.com/blog/apache-spark-machine-learning-tutorial).
 
 ### Architecture
 
@@ -14,13 +11,13 @@ The following slide shows us one the possible solutions which suits for our task
 
 ![Architecture](img/architecture.png)
 
-For the hardest part, prediction, we are going to use Spark Machine Learning technology with [decision tree algorithm](https://spark.apache.org/docs/1.6.0/mllib-decision-tree.html).
 For performing real time predictions we are going to use Spark Streaming technology combined with Apache Kafka which will simulate endless and continuous data flow.
+For the hardest part, prediction, we are going to use Spark Machine Learning technology and [decision tree algorithm](https://spark.apache.org/docs/1.6.0/mllib-decision-tree.html).
 Streamed data will be processed by a decision tree model and results are saved into InsightEdge data grid for future usage.
 
 The solution consist from two parts(Spark jobs):
-- Model training
-- Flight delay prediction
+* Model training
+* Flight delay prediction
 
 Let's see jobs in details. All code and instructions are available on [github](https://github.com/InsightEdge/insightedge-python-demo)
 
@@ -121,8 +118,8 @@ To run the demo we need to perform next steps:
 
 You can find detailed instruction [here](https://github.com/InsightEdge/insightedge-python-demo/blob/master/README.md).
 
-After all steps are done we can examine what was stored in the data grid. Open Zeppelin at http://127.0.0.1:8090, and import a [notebook]()!TODO add zeppelin notebook.!
-Below you can see data stored in data grid where:
+After all steps are done we can examine what was stored in the data grid. Open Zeppelin at http://127.0.0.1:8090, and import a [notebook]() !TODO add zeppelin notebook.!
+Below you can see example of stored data where:
 * day - is day of the month
 * origin - origin airport
 * destionation - destination airport
@@ -144,4 +141,3 @@ In this article we built simple real time prediction application using Spark ML 
   * Incremental algorithms: model build on such algorithms will update itself every time it faces with new data.
   * Periodical model retraining: the solution is to store income data and periodically preform model retraining and substitute existing model with updated one.
   
-
