@@ -7,6 +7,7 @@ For airlines companies it shows where they can minimize flight delays thereby mi
 
 Building solution on top of the InsightEdge allows it to be distributed and easy scalable...
 
+
 ### Architecture
 
 The following slide shows us one the possible solutions which suits for our task.
@@ -22,6 +23,7 @@ The solution consist from two parts(Spark jobs):
 - Flight delay prediction
 
 Let's see jobs in details. All code and instructions are available on [github](https://github.com/InsightEdge/insightedge-python-demo)
+
 
 #### 'Model training' Spark job
 
@@ -106,19 +108,39 @@ def predict_and_save(rdd):
         df.write.format(IE_FORMAT).mode("append").save(DF_SUFFIX + ".FlightWithPrediction")
 ```
 
-### Showing results
 
-For data
-Final data example
+### Running demo and examining results
 
+To run the demo we need to perform next steps:
+1. Start up InsightEdge.
+2. Start up Kafka and create a topic.
+3. Submit Model Training job.
+4. Submit Flight Prediction job.
+5. Push the test data into Kafka's topic.
+
+You can find detailed instruction (here)[https://github.com/InsightEdge/insightedge-python-demo/blob/master/README.md].
+
+After all steps are done we can examine what was stored in the data grid. Open Zeppelin at http://127.0.0.1:8090, and import a (notebook)[]!TODO add zeppelin notebook.!
+Below you can see data stored in data grid where:
+* day - is day of the month
+* origin - origin airport
+* destionation - destination airport
+* distance - distance between airports in miles
+* carrier - airline company
+* actual_delay_minutes - actual flight delay in minutes
+* prediction - whether our model did a correct or an incorrect prediction
 ![Data example](img/data_example.png)
 
-Correct predictions count VS Incorrect predictions count
-
+Since we store prediction result alongside with actual flight delay we can see ratio of correct and incorrect predictions:
 ![Prediction ratio](img/ratio_predictions.png)
 
-### Next steps
+### What's next?
 
-1. Better model
-2. Update model logic - Batch update
-3. Update model logic - Iterative model
+In this article we built simple real time prediction application using Spark ML combined with Spark Streaming on top of InsightEdge. We haven't built perfect solution and there are ways to improve it, eg:
+
+* You may want to take a look at other ML algorithm or tune existing one to give a better prediction rate.
+* During the time model might become outdated. In order to keep it up to date we need to come up with model update strategy. Two possible solutions are to use incremental algorithm and periodical model retraining.
+  * Incremental algorithms: model build on such algorithms will update itself every time it faces with new data.
+  * Periodical model retraining: the solution is to store income data and periodically preform model retraining and substitute existing model with updated one.
+  
+
