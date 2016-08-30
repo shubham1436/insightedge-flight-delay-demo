@@ -14,8 +14,8 @@ The following slide shows us one the possible solutions which suits for our task
 
 ![Architecture](img/architecture.png)
 
-For the hardest part, prediction, we are going to use Spark Machine Learning technology with (decision tree algorithm)[https://spark.apache.org/docs/1.6.0/mllib-decision-tree.html].
-For performing real time predictions we are going to se Spark Streaming technology combined with Apache Kafka which will simulate endless and continuous data flow.
+For the hardest part, prediction, we are going to use Spark Machine Learning technology with [decision tree algorithm](https://spark.apache.org/docs/1.6.0/mllib-decision-tree.html).
+For performing real time predictions we are going to use Spark Streaming technology combined with Apache Kafka which will simulate endless and continuous data flow.
 Streamed data will be processed by a decision tree model and results are saved into InsightEdge data grid for future usage.
 
 The solution consist from two parts(Spark jobs):
@@ -71,7 +71,7 @@ Utils.save_model_to_grid(model, sc)
 
 #### 'Flight delay prediction' Spark job
 
-Second Spark job will load model and mappings from the grid, read data from stream and use the model for prediction. Predictions will be stored in the grid alongside with flight data.
+Second Spark job loads model and mappings from the grid, read data from stream and use the model for prediction. Predictions will be stored in the grid alongside with flight data.
 Let's see main steps:
 
 1. Load models and mappings form data grid
@@ -112,15 +112,16 @@ def predict_and_save(rdd):
 ### Running demo and examining results
 
 To run the demo we need to perform next steps:
+
 1. Start up InsightEdge.
 2. Start up Kafka and create a topic.
 3. Submit Model Training job.
 4. Submit Flight Prediction job.
 5. Push the test data into Kafka's topic.
 
-You can find detailed instruction (here)[https://github.com/InsightEdge/insightedge-python-demo/blob/master/README.md].
+You can find detailed instruction [here](https://github.com/InsightEdge/insightedge-python-demo/blob/master/README.md).
 
-After all steps are done we can examine what was stored in the data grid. Open Zeppelin at http://127.0.0.1:8090, and import a (notebook)[]!TODO add zeppelin notebook.!
+After all steps are done we can examine what was stored in the data grid. Open Zeppelin at http://127.0.0.1:8090, and import a [notebook]()!TODO add zeppelin notebook.!
 Below you can see data stored in data grid where:
 * day - is day of the month
 * origin - origin airport
