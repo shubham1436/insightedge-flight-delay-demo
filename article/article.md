@@ -7,12 +7,12 @@ We will create a solution based on a decision tree algorithm described by Carol 
 
 ### Architecture
 
-The following slide shows us one the possible solutions which suits for our task.
+The following diagram shows the architecture with InsightEdge.
 
 ![Architecture](img/architecture.png)
 
-For performing real time predictions we are going to use Spark Streaming technology combined with Apache Kafka which will simulate endless and continuous data flow.
-For the hardest part, prediction, we are going to use Spark Machine Learning technology and [decision tree algorithm](https://spark.apache.org/docs/1.6.0/mllib-decision-tree.html).
+For performing real time predictions we are going to use Spark Streaming combined with Apache Kafka which will simulate endless and continuous data flow.
+For the hardest part, prediction, we are going to use Spark Machine Learning and [decision tree algorithm](https://spark.apache.org/docs/1.6.0/mllib-decision-tree.html).
 Streamed data will be processed by a decision tree model and results are saved into InsightEdge data grid for future usage.
 
 The solution consist from two parts(Spark jobs):

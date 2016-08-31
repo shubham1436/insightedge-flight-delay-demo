@@ -5,7 +5,7 @@ from pyspark.sql import SQLContext
 from pyspark.streaming import StreamingContext
 from pyspark.streaming.kafka import KafkaUtils
 
-from util.commons import DF_SUFFIX, IE_FORMAT, Utils
+from util.commons import DF_PREFIX, IE_FORMAT, Utils
 
 '''
 bin/zookeeper-server-start.sh config/zookeeper.properties
@@ -63,7 +63,7 @@ def predict_and_save(rdd):
         labels_and_predictions = labeled_points.map(lambda lp: lp.label).zip(predictions).zip(parsed_flights).map(to_row())
 
         df = sqlc.createDataFrame(labels_and_predictions)
-        df.write.format(IE_FORMAT).mode("append").save(DF_SUFFIX + ".FlightWithPrediction")
+        df.write.format(IE_FORMAT).mode("append").save(DF_PREFIX + ".FlightWithPrediction")
 
 
 def to_row():
@@ -97,9 +97,9 @@ if __name__ == "__main__":
 
     model = DecisionTreeModel(Utils.load_model_from_grid(sc))
 
-    carrier_mapping = load_mapping(DF_SUFFIX + ".CarrierMap", sqlc)
-    origin_mapping = load_mapping(DF_SUFFIX + ".OriginMap", sqlc)
-    destination_mapping = load_mapping(DF_SUFFIX + ".DestinationMap", sqlc)
+    carrier_mapping = load_mapping(DF_PREFIX + ".CarrierMap", sqlc)
+    origin_mapping = load_mapping(DF_PREFIX + ".OriginMap", sqlc)
+    destination_mapping = load_mapping(DF_PREFIX + ".DestinationMap", sqlc)
 
     kvs = KafkaUtils.createStream(ssc, zkQuorum, "spark-streaming-consumer", {topic: 1})
     lines = kvs.map(lambda x: x[1])

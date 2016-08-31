@@ -5,7 +5,7 @@ from pyspark import SparkContext
 from pyspark.mllib.tree import DecisionTree
 from pyspark.sql import SQLContext
 
-from util.commons import DF_SUFFIX, IE_FORMAT, Utils
+from util.commons import DF_PREFIX, IE_FORMAT, Utils
 
 
 def save_mapping(mapping, name, sqlc):
@@ -23,6 +23,7 @@ if __name__ == "__main__":
     text_rdd = sc.textFile("/code/insightedge-pyhton-demo/data/flights_jan_2014.csv")
     all_flights_rdd = text_rdd.map(lambda r: Utils.parse_flight(r))
 
+    # TODO broadcast variables
     carrier_mapping = dict(all_flights_rdd.map(lambda flight: flight.carrier).distinct().zipWithIndex().collect())
     origin_mapping = dict(all_flights_rdd.map(lambda flight: flight.origin).distinct().zipWithIndex().collect())
     destination_mapping = dict(all_flights_rdd.map(lambda flight: flight.destination).distinct().zipWithIndex().collect())
@@ -45,9 +46,9 @@ if __name__ == "__main__":
                                          impurity, max_depth, max_bins)
 
     Utils.save_model_to_grid(model, sc)
-    save_mapping(carrier_mapping, DF_SUFFIX + ".CarrierMap", sqlc)
-    save_mapping(origin_mapping, DF_SUFFIX + ".OriginMap", sqlc)
-    save_mapping(destination_mapping, DF_SUFFIX + ".DestinationMap", sqlc)
+    save_mapping(carrier_mapping, DF_PREFIX + ".CarrierMap", sqlc)
+    save_mapping(origin_mapping, DF_PREFIX + ".OriginMap", sqlc)
+    save_mapping(destination_mapping, DF_PREFIX + ".DestinationMap", sqlc)
 
     # Test model
     test_data = test_rdd.map(lambda r: Utils.parse_flight(r)) \
@@ -68,10 +69,3 @@ if __name__ == "__main__":
     #     return ", ".join(str(e) for e in l)
     #
     # testData.map(lambda p: flattern(p)).coalesce(1, True).saveAsTextFile("/code/insightedge-pyhton-demo/data/testData2")
-
-    # Previous
-    # mldata85, mldata15 = mldata.filter(lambda x: x.label == 0.0).randomSplit([0.85, 0.15])
-    # mldata1 = mldata.filter(lambda x: x.label != 0.0)
-    # mldata2 = mldata15 + mldata1
-    # splits = mldata.randomSplit([0.7, 0.3])
-    #(trainingData, testData) = (splits[0], splits[1])

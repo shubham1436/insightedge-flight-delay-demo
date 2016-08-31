@@ -3,7 +3,7 @@ from pyspark.mllib.linalg import Vectors
 
 
 IE_FORMAT = "org.apache.spark.sql.insightedge"
-DF_SUFFIX = "org.insightedge.pythondemo"
+DF_PREFIX = "org.insightedge.pythondemo"
 
 
 class Flight(object):
@@ -54,11 +54,11 @@ class Utils(object):
     def save_model_to_grid(model, sc):
         python_context = sc._jvm.java.lang.Thread.currentThread().getContextClassLoader().loadClass("org.insightedge.pythondemo.PythonInsightEdgeSparkContext").newInstance()
         python_context.init(sc._jsc)
-        python_context.saveMlInstance(DF_SUFFIX + ".DecisionTreeFlightModel", model._java_model)
+        python_context.saveMlInstance(DF_PREFIX + ".DecisionTreeFlightModel", model._java_model)
 
 
     @staticmethod
     def load_model_from_grid(sc):
         python_context = sc._jvm.java.lang.Thread.currentThread().getContextClassLoader().loadClass("org.insightedge.pythondemo.PythonInsightEdgeSparkContext").newInstance()
         python_context.init(sc._jsc)
-        return python_context.loadMlInstance(DF_SUFFIX + ".DecisionTreeFlightModel", "org.apache.spark.mllib.tree.model.DecisionTreeModel")
+        return python_context.loadMlInstance(DF_PREFIX + ".DecisionTreeFlightModel", "org.apache.spark.mllib.tree.model.DecisionTreeModel")
