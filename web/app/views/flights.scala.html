@@ -1,40 +1,53 @@
 @(message: String)(implicit request:RequestHeader)
 
 @main("flights") {
+<div class="container">
+    <div class="row">
+        <div class="col-md-2">
+            <label for="mday">Day of month</label>
+            <input type="text" id="mday" placeholder="1-31">
+        </div>
+        <div class="col-md-2">
+            <label for="wday">Day of week</label>
+            <input type="text" id="wday" placeholder="1-7">
+        </div>
+        <div class="col-md-2">
+            <label for="carrier">Carrier</label>
+            <input type="text" id="carrier" placeholder="eg. AA, DL, WN">
+        </div>
+        <div class="col-md-2">
+            <label for="origin">Origin</label>
+            <input type="text" id="origin" placeholder="eg. JFK, DAL, FLL">
+        </div>
+        <div class="col-md-2">
+            <label for="destination">Destination</label>
+            <input type="text" id="destination" placeholder="eg. JFK, DAL, FLL">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            <label for="departureTime">Scheduled departure time</label>
+            <input type="text" id="departureTime" placeholder="eg. 900, 1200, 1830">
+        </div>
+        <div class="col-md-2">
+            <label for="arrivalTime">Scheduled arrival time</label>
+            <input type="text" id="arrivalTime" placeholder="eg. 900, 1200, 1830">
+        </div>
+        <div class="col-md-2">
+            <label for="crsFlightTime">CRS elapsed flight minutes</label>
+            <input type="text" id="crsFlightTime" placeholder="eg. 45, 120, 300">
+        </div>
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-2">
+            <a class="btn btn-lg btn-primary" onclick="submitFlight()">Predict</a>
+        </div>
+    </div>
 
-<div>
-    <p>Flight submit form</p>
-    Day of month: <input type="text" id="mday"><br>
-    Day of week: <input type="text" id="wday"><br>
-    Carrier: <input type="text" id="carrier"><br>
-    Origin: <input type="text" id="origin"><br>
-    Destination: <input type="text" id="destination"><br>
-    Scheduled departure time: <input type="text" id="departureTime"><br>
-    Scheduled arrival time: <input type="text" id="arrivalTime"><br>
-    CRS elapsed flight minutes: <input type="text" id="crsFlightTime"><br>
-    <input type="submit" value="Predict" onclick="submitFlight()">
-</div>
-
-<div>
-    <p>Submitted flight table</p>
-    <table id="submittedFlightsTable">
-        <tbody>
-        <tr>
-            <th>Number</th>
-            <th>Streamed</th>
-            <th>Origin</th>
-            <th>Destination</th>
-            <th>Delay</th>
-            <th>Prediction</th>
-        </tr>
-        </tbody>
-    </table>
-</div>
-
-<div id="streamedFlightsDiv">
-    <p>Streamed flight table</p>
-    <table id="streamedFlightsTable">
-        <tbody>
+    <h2 class="sub-header">Submitted flights <small id="submittedCount"></small></h2>
+    <div class="table-responsive scrolled-table">
+        <table id="submittedFlightsTable" class="table table-striped table-condensed">
+            <tbody>
             <tr>
                 <th>Number</th>
                 <th>Streamed</th>
@@ -43,8 +56,24 @@
                 <th>Delay</th>
                 <th>Prediction</th>
             </tr>
-        </tbody>
-    </table>
-</div>
+            </tbody>
+        </table>
+    </div>
 
+    <h2 class="sub-header">Streamed flights <small id="streamedCount"></small></h2>
+    <div class="table-responsive scrolled-table">
+        <table id="streamedFlightsTable" class="table table-striped table-condensed">
+            <tbody>
+                <tr>
+                    <th>Number</th>
+                    <th>Streamed</th>
+                    <th>Origin</th>
+                    <th>Destination</th>
+                    <th>Delay</th>
+                    <th>Prediction</th>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
 }

@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+cd /code/insightedge-pyhton-demo/python/pydemo
+
+zip -r util.zip /code/insightedge-pyhton-demo/python/pydemo/util
+
 /home/dgurin/Downloads/gigaspaces-insightedge-1.0.0-premium/bin/insightedge-submit \
    --conf spark.insightedge.space.name=insightedge-space \
    --conf spark.insightedge.space.lookup.group=insightedge \
