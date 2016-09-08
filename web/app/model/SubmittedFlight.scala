@@ -4,6 +4,7 @@ package model
   * @author Danylo_Hurin.
   */
 case class SubmittedFlight(
+                            rowId: String,
                             dayOfMonth: String,
                             dayOfWeek: String,
                             carrier: String,

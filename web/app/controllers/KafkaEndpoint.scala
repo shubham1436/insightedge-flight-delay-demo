@@ -12,15 +12,9 @@ object KafkaEndpoint extends Controller {
   implicit val flightsReader = Json.reads[ShortFlight]
   implicit val submittedFlightsReader = Json.reads[SubmittedFlight]
 
-  var rowId = 0 //TODO
-  def newId() = {
-    rowId += 1
-    rowId
-  }
-
   def submitFlight = Action(parse.json) { request =>
     parseJson(request) { flight: SubmittedFlight =>
-      val rowId = newId()
+      val rowId = flight.rowId.toLong
       val event = FlightEvent(
         rowId,
         flight.dayOfMonth,

@@ -5,11 +5,8 @@ $(function () {
     $.demo.submittedCount = 0;
     $.demo.streamedLastRowId = 0;
     $.demo.streamedCount = 0;
+    $.demo.debug = true;
 });
-
-if (window.console) {
-  console.log("Welcome to your Play application's JavaScript!");
-}
 
 function getFlights() {
     var flights = jsRoutes.controllers.FlightEndpoint.getLastFlights($.demo.streamedLastRowId, $.demo.submittedLastRowId);
@@ -34,17 +31,15 @@ function getFlights() {
                 row.push('<td>');     row.push(flight.departureDelayMinutes);   row.push('</td>');
                 if ((flight.prediction == "0" && flight.departureDelayMinutes <= 40) ||
                     (flight.prediction == "1" && flight.departureDelayMinutes > 40)) {
-                    row.push('<td class="success">Correct');
+                    row.push('<td class="success center-text">Correct');
                 } else {
-                    row.push('<td class="warning">Incorrect');
+                    row.push('<td class="warning center-text">Incorrect');
                 }
                 row.push('</td>');
-                row.push('</tr>')
+                row.push('</tr>');
                 var combinedRow = row.join("");
                 $('#streamedFlightsTable tr:last').after(combinedRow);
-                //$('#streamedFlightsTable tr:last').after('<tr><td>' + flight.rowId + '</td><td>' + flight.streamed + '</td><td>' + flight.origin + '</td><td>' + flight.destination + '</td><td>' + flight.departureDelayMinutes + '</td><td>' + flight.prediction + '</td></tr>');
             } else {
-                $.demo.submittedCount += 1
                 if (flight.rowId > $.demo.submittedLastRowId) {
                     $.demo.submittedLastRowId = flight.rowId
                 }
@@ -58,21 +53,25 @@ function getFlights() {
                 row.push('<td>'); row.push(flight.scheduledDepartureTime);  row.push('</td>');
                 row.push('<td>'); row.push(flight.scheduledArrivalTime);    row.push('</td>');
                 if (flight.prediction == "0") {
-                    row.push('<td class="success">No Delay');
+                    row.push('<td class="success center-text">On time');
                 } else {
-                    row.push('<td class="warning">Delay');
+                    row.push('<td class="warning center-text">Delay');
                 }
                 row.push('</td>');
                 row.push('</tr>')
                 var combinedRow = row.join("");
-                $('#submittedFlightsTable tr:last').after(combinedRow);
-                //$('#submittedFlightsTable tr:last').after('<tr><td>' + flight.rowId + '</td><td>Jan ' + flight.dayOfMonth + '</td><td>' + flight.carrier + '</td><td>' + flight.origin + '</td><td>' + flight.destination + '</td><td>' + flight.departureDelayMinutes + '</td><td>' + flight.prediction + '</td></tr>');
+                if ($.demo.submittedCount > 0) {
+                    $('#submittedFlightsTable tr:first').after(combinedRow);
+                } else {
+                    $('#submittedFlightsTable tr:last').after(combinedRow);
+                }
+                $.demo.submittedCount += 1
             }
             $('#submittedCount').text($.demo.submittedCount)
             $('#streamedCount').text($.demo.streamedCount)
         });
-        console.log("Last streamed: " + $.demo.streamedLastRowId);
-        console.log("Last submitted: " + $.demo.submittedLastRowId);
+        log("Last streamed: " + $.demo.streamedLastRowId);
+        log("Last submitted: " + $.demo.submittedLastRowId);
     })
 
     setTimeout(function() {getFlights();}, $.demo.refreshRate);
@@ -81,6 +80,7 @@ function getFlights() {
 function submitFlight() {
     var route = jsRoutes.controllers.KafkaEndpoint.submitFlight();
     var flightToSubmit = JSON.stringify({
+                                         rowId: $.demo.submittedLastRowId + 1 + "",
                                          dayOfMonth: $('#mday').val(),
                                          dayOfWeek: $('#wday').val(),
                                          carrier: $('#carrier').val(),
@@ -95,10 +95,17 @@ function submitFlight() {
         type: route.type,
         data: flightToSubmit,
         contentType: "application/json",
-        success: function(newId) {console.log("Flight row id: " + newId);}
+        success: function(newId) {
+            log("Submitted flight row id: " + newId);
+        }
     });
-    console.log("Flight was submitted: " + flightToSubmit);
+    log("Flight was submitted: " + flightToSubmit);
 }
 
+function log(msg) {
+    if ($.demo.debug) {
+        console.log(msg);
+    }
+}
 
 $(document).ready(getFlights);

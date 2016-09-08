@@ -23,12 +23,12 @@ object FlightEndpoint extends Controller {
   }
 
   def getLastFlights(streamedRowId: String, submittedRowId: String) = Action { implicit request =>
-    val streamedQuery = new SQLQuery[SpaceDocument]("FlightWithPrediction", "(row_id > ? AND streamed = ?) OR (row_id > ? AND streamed = ?)")
-    streamedQuery.setParameter(1, streamedRowId)
-    streamedQuery.setParameter(2, "1")
-    streamedQuery.setParameter(3, submittedRowId)
-    streamedQuery.setParameter(4, "0")
-    val streamedFlights = grid.readMultiple(streamedQuery).map { sd =>
+    val query = new SQLQuery[SpaceDocument]("FlightWithPrediction", "(row_id > ? AND streamed = ?) OR (row_id > ? AND streamed = ?)")
+    query.setParameter(1, streamedRowId)
+    query.setParameter(2, "1")
+    query.setParameter(3, submittedRowId)
+    query.setParameter(4, "0")
+    val flights = grid.readMultiple(query).map { sd =>
       ShortFlight(
         sd.getProperty[Long]("row_id"),
         sd.getProperty[String]("streamed"),
@@ -37,14 +37,19 @@ object FlightEndpoint extends Controller {
         sd.getProperty[String]("carrier"),
         sd.getProperty[String]("origin"),
         sd.getProperty[String]("destination"),
-        sd.getProperty[String]("scheduled_departure_time"),
+        addColon(sd.getProperty[String]("scheduled_departure_time")),
         sd.getProperty[String]("departure_delay_minutes"),
-        sd.getProperty[String]("scheduled_arrival_time"),
+        addColon(sd.getProperty[String]("scheduled_arrival_time")),
         sd.getProperty[String]("crs_elapsed_flight_minutes"),
         sd.getProperty[Double]("prediction")
       )
     }.toList
 
-    Ok(Json.toJson(streamedFlights)(flightsListWriter))
+    Ok(Json.toJson(flights)(flightsListWriter))
+  }
+
+  def addColon(time: String): String = {
+    val (hours, minutes) = time.splitAt(time.length - 2)
+    hours + ':' + minutes
   }
 }
