@@ -1,0 +1,50 @@
+@(message: String)(implicit request:RequestHeader)
+
+@main("flights") {
+
+<div>
+    <p>Flight submit form</p>
+    Day of month: <input type="text" id="mday"><br>
+    Day of week: <input type="text" id="wday"><br>
+    Carrier: <input type="text" id="carrier"><br>
+    Origin: <input type="text" id="origin"><br>
+    Destination: <input type="text" id="destination"><br>
+    Scheduled departure time: <input type="text" id="departureTime"><br>
+    Scheduled arrival time: <input type="text" id="arrivalTime"><br>
+    CRS elapsed flight minutes: <input type="text" id="crsFlightTime"><br>
+    <input type="submit" value="Predict" onclick="submitFlight()">
+</div>
+
+<div>
+    <p>Submitted flight table</p>
+    <table id="submittedFlightsTable">
+        <tbody>
+        <tr>
+            <th>Number</th>
+            <th>Streamed</th>
+            <th>Origin</th>
+            <th>Destination</th>
+            <th>Delay</th>
+            <th>Prediction</th>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div id="streamedFlightsDiv">
+    <p>Streamed flight table</p>
+    <table id="streamedFlightsTable">
+        <tbody>
+            <tr>
+                <th>Number</th>
+                <th>Streamed</th>
+                <th>Origin</th>
+                <th>Destination</th>
+                <th>Delay</th>
+                <th>Prediction</th>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+}

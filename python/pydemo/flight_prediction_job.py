@@ -12,15 +12,18 @@ bin/zookeeper-server-start.sh config/zookeeper.properties
 bin/kafka-server-start.sh config/server.properties
 bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic test
 
+
+
 Run simple kafka file producer from terminal
-awk '{ print $0; system("sleep 0.1");}'  /code/insightedge-pyhton-demo/data/testData2/part-00000 | bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test
-cat  /code/insightedge-pyhton-demo/data/testData3/part-00000 | bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test
+awk 'function randint(n) { return int(n * rand()) } { print NR "," randint(2) "," $0; system("sleep 2");}'  /code/insightedge-pyhton-demo/data/testData3/part-00000 | bin/kafka-console-producer.sh --broker-list localhost:9092 --topic python-blog
+awk '{ print NR ",1," $0; system("sleep 2");}'  /code/insightedge-pyhton-demo/data/testData3/part-00000 | bin/kafka-console-producer.sh --broker-list localhost:9092 --topic python-blog
+cat  /code/insightedge-pyhton-demo/data/testData3/part-00000 | bin/kafka-console-producer.sh --broker-list localhost:9092 --topic python-blog
 awk '{ print $0; system("sleep 1");}'  /code/insightedge-pyhton-demo/data/rita2014jan.csv | bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test
 
 Show correct-incorrect ration in Zeppelin
 
 %pyspark
-gridDf = sqlContext.read.format("org.apache.spark.sql.insightedge").option("collection", "org.insightedge.pythondemo.FlightWithPrediction").load()
+gridDf = sqlContext.read.format("org.apache.spark.sql.insightedge").option("collection", "FlightWithPrediction").load()
 gridDf.registerTempTable("FlightWithPrediction")
 
 %sql
@@ -56,25 +59,28 @@ def load_mapping(mapping_name, sqlc):
 
 def predict_and_save(rdd):
     if not rdd.isEmpty():
-        parsed_flights = rdd.map(Utils.parse_flight)
+        parsed_flights = rdd.map(Utils.parse_grid_flight)
         labeled_points = parsed_flights.map(lambda flight: Utils.create_labeled_point(flight, carrier_mapping, origin_mapping, destination_mapping))
 
         predictions = model.predict(labeled_points.map(lambda x: x.features))
         labels_and_predictions = labeled_points.map(lambda lp: lp.label).zip(predictions).zip(parsed_flights).map(to_row())
 
         df = sqlc.createDataFrame(labels_and_predictions)
-        df.write.format(IE_FORMAT).mode("append").save(DF_PREFIX + ".FlightWithPrediction")
+        df.write.format(IE_FORMAT).mode("append").save("FlightWithPrediction")
 
 
 def to_row():
     return lambda t: Row(actual=t[0][0],
                          prediction=t[0][1],
+                         row_id=long(t[1].row_id),
+                         streamed=t[1].streamed,
                          day_of_month=t[1].day_of_month,
                          day_of_week=t[1].day_of_week,
                          carrier=t[1].carrier,
                          tail_number=t[1].tail_number,
                          flight_number=t[1].flight_number,
-                         origin_id=t[1].origin_id, origin=t[1].origin,
+                         origin_id=t[1].origin_id,
+                         origin=t[1].origin,
                          destination_id=t[1].destination_id,
                          destination=t[1].destination,
                          scheduled_departure_time=t[1].scheduled_departure_time,
@@ -97,9 +103,9 @@ if __name__ == "__main__":
 
     model = DecisionTreeModel(Utils.load_model_from_grid(sc))
 
-    carrier_mapping = load_mapping(DF_PREFIX + ".CarrierMap", sqlc)
-    origin_mapping = load_mapping(DF_PREFIX + ".OriginMap", sqlc)
-    destination_mapping = load_mapping(DF_PREFIX + ".DestinationMap", sqlc)
+    carrier_mapping = load_mapping("CarrierMap", sqlc)
+    origin_mapping = load_mapping("OriginMap", sqlc)
+    destination_mapping = load_mapping("DestinationMap", sqlc)
 
     kvs = KafkaUtils.createStream(ssc, zkQuorum, "spark-streaming-consumer", {topic: 1})
     lines = kvs.map(lambda x: x[1])

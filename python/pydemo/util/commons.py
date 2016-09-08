@@ -27,11 +27,41 @@ class Flight(object):
         self.crs_elapsed_flight_minutes = crs_elapsed_flight_minutes
         self.distance = distance
 
+#TODO
+class GridFlight(object):
+    def __init__(self, number, streamed, day_of_month, day_of_week, carrier, tail_number, flight_number, origin_id, origin, destination_id, destination, scheduled_departure_time, actual_departure_time,
+                 departure_delay_minutes, scheduled_arrival_time, actual_arrival_time, arrival_delay_minutes, crs_elapsed_flight_minutes, distance):
+        self.row_id = number
+        self.streamed = streamed
+        self.day_of_month = day_of_month
+        self.day_of_week = day_of_week
+        self.carrier = carrier
+        self.tail_number = tail_number
+        self.flight_number = flight_number
+        self.origin_id = origin_id
+        self.origin = origin
+        self.destination_id = destination_id
+        self.destination = destination
+        self.scheduled_departure_time = scheduled_departure_time
+        self.actual_departure_time = actual_departure_time
+        self.departure_delay_minutes = departure_delay_minutes
+        self.scheduled_arrival_time = scheduled_arrival_time
+        self.actual_arrival_time = actual_arrival_time
+        self.arrival_delay_minutes = arrival_delay_minutes
+        self.crs_elapsed_flight_minutes = crs_elapsed_flight_minutes
+        self.distance = distance
+
+
 class Utils(object):
     @staticmethod
     def parse_flight(data):
         line = data.split(',')
         return Flight(line[0], line[1], line[2], line[3], line[4], line[5], line[6], line[7], line[8], line[9], line[10], line[11], line[12], line[13], line[14], line[15], line[16])
+
+    @staticmethod
+    def parse_grid_flight(data):
+        line = data.split(',')
+        return GridFlight(line[0], line[1], line[2], line[3], line[4], line[5], line[6], line[7], line[8], line[9], line[10], line[11], line[12], line[13], line[14], line[15], line[16], line[17], line[18])
 
     @staticmethod
     def create_labeled_point(flight, carrier_mapping, origin_mapping, destination_mapping):

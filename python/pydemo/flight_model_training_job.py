@@ -46,9 +46,9 @@ if __name__ == "__main__":
                                          impurity, max_depth, max_bins)
 
     Utils.save_model_to_grid(model, sc)
-    save_mapping(carrier_mapping, DF_PREFIX + ".CarrierMap", sqlc)
-    save_mapping(origin_mapping, DF_PREFIX + ".OriginMap", sqlc)
-    save_mapping(destination_mapping, DF_PREFIX + ".DestinationMap", sqlc)
+    save_mapping(carrier_mapping, "CarrierMap", sqlc)
+    save_mapping(origin_mapping, "OriginMap", sqlc)
+    save_mapping(destination_mapping, "DestinationMap", sqlc)
 
     # Test model
     test_data = test_rdd.map(lambda r: Utils.parse_flight(r)) \
