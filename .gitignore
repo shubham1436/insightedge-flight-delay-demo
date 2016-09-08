@@ -1,5 +1,7 @@
 *.class
 *.log
+*.pyc
+*.zip
 
 # sbt specific
 .cache
@@ -16,3 +18,4 @@ project/plugins/project/
 .scala_dependencies
 .worksheet
 *.iml
+.idea
