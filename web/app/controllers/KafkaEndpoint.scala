@@ -26,7 +26,7 @@ object KafkaEndpoint extends Controller {
         flight.scheduledArrivalTime,
         flight.crsElapsedFlightMinutes
       )
-      send(event.toString(), "python-blog")
+      send(event.toString(), "flights")
       Created(rowId.toString)
     }
   }

@@ -3,15 +3,27 @@
 Python API demo: real time flights delay prediction
 
 ### Running demo TODO 
- 
-1. Launch InsightEdge `./sbin/insightedge.sh --mode demo`
 
-2. Launch Kafka with `./scripts/kafka-start.sh`
+1. Set INSIGHTEDGE_HOME and KAFKA_HOME env vars
+```bash
+export INSIGHTEDGE_HOME="path/to/insightedge"
+export KAFKA_HOME="path/to/kafka"
+```
 
-3. Submit model training job `./scripts/spark-model-training-job.sh`
+2. Launch InsightEdge `$INSIGHTEDGE_HOME/sbin/insightedge.sh --mode demo`
 
-4. Submit flight delay prediction job `./scripts/spark-flight-delay-prediction-job.sh`
+3. Launch Kafka with `./scripts/kafka-start.sh`
 
-5. Submit data to Kafka topic `./scripts/kafka-submit-data.sh`
+4. Submit model training job `./scripts/spark-model-training-job.sh`
 
-6. Investigate results in Zeppelin: http://127.0.0.1:8090
+5. Submit flight delay prediction job `./scripts/spark-flight-delay-prediction-job.sh`. Please note that this is endless job.
+
+6. Submit data to Kafka topic `./scripts/kafka-submit-data.sh` in different terminal window/tab. You will see row which were sent to the Kafka topic.
+
+7. Run web application `sbt web/run`
+
+8. Investigate results in Zeppelin(http://127.0.0.1:8090) and in web app(http://localhost:9000)
+
+To shutdown InsightEdge run `$INSIGHTEDGE_HOME/sbin/insightedge.sh --mode shutdown`
+To shutdown Kafka run `./scripts/kafka-stop.sh`
+To stop prediction Spark job `./scripts/spark-stop-prediction-job.sh`

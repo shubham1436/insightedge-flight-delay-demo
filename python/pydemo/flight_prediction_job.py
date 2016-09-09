@@ -15,10 +15,10 @@ bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 -
 
 
 Run simple kafka file producer from terminal
-awk 'function randint(n) { return int(n * rand()) } { print NR "," randint(2) "," $0; system("sleep 2");}'  /code/insightedge-pyhton-demo/data/testData3/part-00000 | bin/kafka-console-producer.sh --broker-list localhost:9092 --topic python-blog
-awk '{ print NR ",1," $0; system("sleep 2");}'  /code/insightedge-pyhton-demo/data/testData3/part-00000 | bin/kafka-console-producer.sh --broker-list localhost:9092 --topic python-blog
-cat  /code/insightedge-pyhton-demo/data/testData3/part-00000 | bin/kafka-console-producer.sh --broker-list localhost:9092 --topic python-blog
-awk '{ print $0; system("sleep 1");}'  /code/insightedge-pyhton-demo/data/rita2014jan.csv | bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test
+awk 'function randint(n) { return int(n * rand()) } { print NR "," randint(2) "," $0; system("sleep 2");}'  /code/insightedge-pyhton-demo/data/testData3/part-00000 | bin/kafka-console-producer.sh --broker-list localhost:9092 --topic flights
+awk '{ print NR ",1," $0; system("sleep 2");}'  /code/insightedge-pyhton-demo/data/testData3/part-00000 | bin/kafka-console-producer.sh --broker-list localhost:9092 --topic flights
+cat  /code/insightedge-pyhton-demo/data/testData3/part-00000 | bin/kafka-console-producer.sh --broker-list localhost:9092 --topic flights
+awk '{ print $0; system("sleep 1");}'  /code/insightedge-pyhton-demo/data/rita2014jan.csv | bin/kafka-console-producer.sh --broker-list localhost:9092 --topic flights
 
 Show correct-incorrect ration in Zeppelin
 
@@ -99,7 +99,7 @@ if __name__ == "__main__":
     sqlc = SQLContext(sc)
 
     zkQuorum = "localhost:2181"
-    topic = "python-blog"
+    topic = "flights"
 
     model = DecisionTreeModel(Utils.load_model_from_grid(sc))
 
