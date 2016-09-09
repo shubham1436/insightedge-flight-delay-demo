@@ -1,11 +1,13 @@
 from __future__ import print_function
 
+import sys
+
 from pyspark import Row
 from pyspark import SparkContext
 from pyspark.mllib.tree import DecisionTree
 from pyspark.sql import SQLContext
 
-from util.commons import DF_PREFIX, IE_FORMAT, Utils
+from util.commons import IE_FORMAT, Utils
 
 
 def save_mapping(mapping, name, sqlc):
@@ -17,7 +19,7 @@ def save_mapping(mapping, name, sqlc):
 
 
 if __name__ == "__main__":
-    sc = SparkContext(appName="Insightedge Python API example: train model")
+    sc = SparkContext(appName="InsightEdge Python API example: train model")
     sqlc = SQLContext(sc)
 
     text_rdd = sc.textFile("/code/insightedge-pyhton-demo/data/flights_jan_2014.csv")
@@ -56,16 +58,8 @@ if __name__ == "__main__":
     predictions = model.predict(test_data.map(lambda x: x.features))
     labelsAndPredictions = test_data.map(lambda lp: lp.label).zip(predictions)
     testErr = float(labelsAndPredictions.filter(lambda x: x[0] != x[1]).count()) / test_data.count()
-    #print(model.toDebugString())
     print("Test Error = {0}".format(testErr))
 
     # Save test data
-    #test_data.coalesce(1, True).saveAsTextFile("/code/insightedge-pyhton-demo/data/testData3")
-
-    # Save parsed data for testing
-    # def flattern(p):
-    #     l = p.features.toArray().tolist()
-    #     l.insert(0, p.label)
-    #     return ", ".join(str(e) for e in l)
-    #
-    # testData.map(lambda p: flattern(p)).coalesce(1, True).saveAsTextFile("/code/insightedge-pyhton-demo/data/testData2")
+    test_data_output = sys.argv[1]
+    test_data.coalesce(1, True).saveAsTextFile(test_data_output)

@@ -4,6 +4,8 @@
 
 ./scripts/python-zip-utils.sh
 
+CURRENT_FOLDER=`pwd`"/data/test"
+
 echo "-- Submitting model training Spark job"
 $INSIGHTEDGE_HOME/bin/insightedge-submit \
    --conf spark.insightedge.space.name=insightedge-space \
@@ -11,5 +13,5 @@ $INSIGHTEDGE_HOME/bin/insightedge-submit \
    --conf spark.insightedge.space.lookup.locator=127.0.0.1:4174 \
    --jars ./java/target/java-pyhton-context-1.0-SNAPSHOT.jar \
    --py-files ./python/pydemo/util.zip \
-   ./python/pydemo/flight_model_training_job.py
+   ./python/pydemo/flight_model_training_job.py $CURRENT_FOLDER
 echo "-- Done."

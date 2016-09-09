@@ -12,7 +12,7 @@ nohup $INSIGHTEDGE_HOME/bin/insightedge-submit \
    --packages org.apache.spark:spark-streaming-kafka-assembly_2.10:1.6.0 \
    --jars ./java/target/java-pyhton-context-1.0-SNAPSHOT.jar \
    --py-files ./python/pydemo/util.zip \
-   /code/insightedge-pyhton-demo/python/pydemo/flight_prediction_job.py > $LOGS 2>&1 &
+   ./python/pydemo/flight_prediction_job.py > $LOGS 2>&1 &
 echo "-- Waiting 5 seconds..."
 sleep 5
 echo "-- Job status: http://localhost:4040"

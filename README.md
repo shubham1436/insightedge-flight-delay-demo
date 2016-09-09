@@ -18,7 +18,7 @@ export KAFKA_HOME="path/to/kafka"
 
 5. Submit flight delay prediction job `./scripts/spark-flight-delay-prediction-job.sh`. Please note that this is endless job.
 
-6. Submit data to Kafka topic `./scripts/kafka-submit-data.sh` in different terminal window/tab. You will see row which were sent to the Kafka topic.
+6. In separate terminal tab submit data to Kafka topic `./scripts/kafka-submit-data.sh`. In the console you will see rows which were sent to the Kafka topic.
 
 7. Run web application `sbt web/run`
 
