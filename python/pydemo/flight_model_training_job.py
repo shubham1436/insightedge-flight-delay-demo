@@ -62,4 +62,4 @@ if __name__ == "__main__":
 
     # Save test data
     test_data_output = sys.argv[1]
-    test_data.coalesce(1, True).saveAsTextFile(test_data_output)
+    test_rdd.coalesce(1, True).saveAsTextFile(test_data_output)

@@ -24,7 +24,7 @@ case class FlightEvent(
       s"," + //flightNumber
       s"," + //originId
       s"$origin," +
-      s"," + //desctinationId
+      s"," + //destinationId
       s"$destination," +
       s"$scheduledDepartureTime," +
       s"," + //actual_departure_time

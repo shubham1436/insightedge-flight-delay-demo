@@ -58,15 +58,19 @@ def load_mapping(mapping_name, sqlc):
 
 
 def predict_and_save(rdd):
-    if not rdd.isEmpty():
-        parsed_flights = rdd.map(Utils.parse_grid_flight)
-        labeled_points = parsed_flights.map(lambda flight: Utils.create_labeled_point(flight, carrier_mapping, origin_mapping, destination_mapping))
+    try:
+        if not rdd.isEmpty():
+            parsed_flights = rdd.map(Utils.parse_grid_flight)
+            labeled_points = parsed_flights.map(lambda flight: Utils.create_labeled_point(flight, carrier_mapping, origin_mapping, destination_mapping))
 
-        predictions = model.predict(labeled_points.map(lambda x: x.features))
-        labels_and_predictions = labeled_points.map(lambda lp: lp.label).zip(predictions).zip(parsed_flights).map(to_row())
+            predictions = model.predict(labeled_points.map(lambda x: x.features))
+            labels_and_predictions = labeled_points.map(lambda lp: lp.label).zip(predictions).zip(parsed_flights).map(to_row())
 
-        df = sqlc.createDataFrame(labels_and_predictions)
-        df.write.format(IE_FORMAT).mode("append").save("FlightWithPrediction")
+            df = sqlc.createDataFrame(labels_and_predictions)
+            df.write.format(IE_FORMAT).mode("append").save("FlightWithPrediction")
+    except:
+        print("Could not process rdd")
+
 
 
 def to_row():

@@ -2,7 +2,8 @@
 
 Python API demo: real time flights delay prediction
 
-### Running demo TODO 
+### Running demo
+#TODO Numpy install
 
 1. Set INSIGHTEDGE_HOME and KAFKA_HOME env vars
 ```bash
@@ -24,6 +25,6 @@ export KAFKA_HOME="path/to/kafka"
 
 8. Investigate results in Zeppelin(http://127.0.0.1:8090) and in web app(http://localhost:9000)
 
-To shutdown InsightEdge run `$INSIGHTEDGE_HOME/sbin/insightedge.sh --mode shutdown`
-To shutdown Kafka run `./scripts/kafka-stop.sh`
-To stop prediction Spark job `./scripts/spark-stop-prediction-job.sh`
+- To shutdown InsightEdge run `$INSIGHTEDGE_HOME/sbin/insightedge.sh --mode shutdown`
+- To shutdown Kafka run `./scripts/kafka-stop.sh`
+- To stop prediction Spark job `./scripts/spark-stop-prediction-job.sh`
