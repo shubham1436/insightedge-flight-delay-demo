@@ -2,6 +2,7 @@
 *.log
 *.pyc
 *.zip
+data/test
 
 # sbt specific
 .cache
