@@ -27,7 +27,7 @@ object grid {
 object kafka {
 
   case class FlightEvent(
-                          rowId: Long,
+                          rowId: Int,
                           dayOfMonth: String,
                           dayOfWeek: String,
                           carrier: String,
@@ -62,7 +62,7 @@ object kafka {
   }
 
   object FlightEvent {
-    def apply(rowId: Long, flight: SubmittedFlight): FlightEvent = {
+    def apply(rowId: Int, flight: SubmittedFlight): FlightEvent = {
       FlightEvent(
         rowId,
         flight.dayOfMonth,
@@ -82,7 +82,6 @@ object kafka {
 object web {
 
   case class SubmittedFlight(
-                              rowId: String,
                               dayOfMonth: String,
                               dayOfWeek: String,
                               carrier: String,

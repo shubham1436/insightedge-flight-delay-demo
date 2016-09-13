@@ -1,6 +1,7 @@
 package controllers
 
 import java.util.Properties
+import java.util.concurrent.atomic.AtomicInteger
 
 import kafka.producer.{KeyedMessage, Producer, ProducerConfig}
 import model.grid.Flight
@@ -11,12 +12,14 @@ import play.api.mvc._
 
 object KafkaEndpoint extends Controller {
 
+  val counter = new AtomicInteger(0)
+
   implicit val flightsReader = Json.reads[Flight]
   implicit val submittedFlightsReader = Json.reads[SubmittedFlight]
 
   def submitFlight = Action(parse.json) { request =>
     parseJson(request) { flight: SubmittedFlight =>
-      val rowId = flight.rowId.toLong
+      val rowId = counter.incrementAndGet()
       val event = FlightEvent(rowId, flight)
       send(event.toString(), "flights")
       Created(rowId.toString)

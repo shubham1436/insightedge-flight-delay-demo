@@ -45,16 +45,12 @@ object FlightEndpoint extends Controller {
       sd.getProperty[String]("carrier"),
       sd.getProperty[String]("origin"),
       sd.getProperty[String]("destination"),
-      addColon(sd.getProperty[String]("scheduled_departure_time")),
+      sd.getProperty[String]("scheduled_departure_time"),
       sd.getProperty[String]("departure_delay_minutes"),
-      addColon(sd.getProperty[String]("scheduled_arrival_time")),
+      sd.getProperty[String]("scheduled_arrival_time"),
       sd.getProperty[String]("crs_elapsed_flight_minutes"),
       sd.getProperty[Double]("prediction")
     )
   }
 
-  def addColon(time: String): String = {
-    val (hours, minutes) = time.splitAt(time.length - 2)
-    hours + ':' + minutes
-  }
 }
