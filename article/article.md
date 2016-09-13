@@ -118,7 +118,7 @@ To run the demo we need to perform next steps:
 
 You can find detailed instruction [here](https://github.com/InsightEdge/insightedge-python-demo/blob/master/README.md).
 
-After all steps are done we can examine what was stored in the data grid. Open Zeppelin at http://127.0.0.1:8090, and import a [notebook]() !TODO add zeppelin notebook.!
+After all steps are done we can examine what was stored in the data grid. Open Zeppelin at http://127.0.0.1:8090 and import a [notebook](https://github.com/InsightEdge/insightedge-python-demo/blob/master/zeppelin/InsightEdge%20Python%20API%20Demo.json).
 Below you can see example of stored data where:
 * day - is day of the month
 * origin - origin airport
