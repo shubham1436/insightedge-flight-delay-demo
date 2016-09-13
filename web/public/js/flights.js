@@ -5,6 +5,7 @@ $(function () {
     $.demo.submittedCount = 0;
     $.demo.streamedLastRowId = 0;
     $.demo.streamedCount = 0;
+    $.demo.delayedMinutes = 40;
     $.demo.debug = true;
 });
 
@@ -15,55 +16,21 @@ function getFlights() {
         $.each(data, function(index, flight) {
             var tableToInsert = ""
             if (flight.streamed == "1") {
-                $.demo.streamedCount += 1;
                 if (flight.rowId > $.demo.streamedLastRowId) {
                     $.demo.streamedLastRowId = flight.rowId
                 }
-                var row = [];
-                row.push('<tr>')
-                row.push('<td>');     row.push(flight.rowId);                   row.push('</td>');
-                row.push('<td>Jan '); row.push(flight.dayOfMonth);              row.push('</td>');
-                row.push('<td>');     row.push(flight.carrier);                 row.push('</td>');
-                row.push('<td>');     row.push(flight.origin);                  row.push('</td>');
-                row.push('<td>');     row.push(flight.destination);             row.push('</td>');
-                row.push('<td>');     row.push(flight.scheduledDepartureTime);  row.push('</td>');
-                row.push('<td>');     row.push(flight.scheduledArrivalTime);    row.push('</td>');
-                row.push('<td>');     row.push(flight.departureDelayMinutes);   row.push('</td>');
-                if ((flight.prediction == "0" && flight.departureDelayMinutes <= 40) ||
-                    (flight.prediction == "1" && flight.departureDelayMinutes > 40)) {
-                    row.push('<td class="success center-text">Correct');
-                } else {
-                    row.push('<td class="warning center-text">Incorrect');
-                }
-                row.push('</td>');
-                row.push('</tr>');
-                var combinedRow = row.join("");
-                $('#streamedFlightsTable tr:last').after(combinedRow);
+                var row = toStreamedRow(flight)
+                $('#streamedFlightsTable tr:last').after(row);
+                $.demo.streamedCount += 1;
             } else {
                 if (flight.rowId > $.demo.submittedLastRowId) {
                     $.demo.submittedLastRowId = flight.rowId
                 }
-                var row = [];
-                row.push('<tr>')
-                row.push('<td>'); row.push(flight.rowId);                   row.push('</td>');
-                row.push('<td>'); row.push(flight.dayOfMonth);              row.push('</td>');
-                row.push('<td>'); row.push(flight.carrier);                 row.push('</td>');
-                row.push('<td>'); row.push(flight.origin);                  row.push('</td>');
-                row.push('<td>'); row.push(flight.destination);             row.push('</td>');
-                row.push('<td>'); row.push(flight.scheduledDepartureTime);  row.push('</td>');
-                row.push('<td>'); row.push(flight.scheduledArrivalTime);    row.push('</td>');
-                if (flight.prediction == "0") {
-                    row.push('<td class="success center-text">On time');
-                } else {
-                    row.push('<td class="warning center-text">Delay');
-                }
-                row.push('</td>');
-                row.push('</tr>')
-                var combinedRow = row.join("");
+                row = toSubmittedRow(flight)
                 if ($.demo.submittedCount > 0) {
-                    $('#submittedFlightsTable tr:first').after(combinedRow);
+                    $('#submittedFlightsTable tr:first').after(row);
                 } else {
-                    $('#submittedFlightsTable tr:last').after(combinedRow);
+                    $('#submittedFlightsTable tr:last').after(row);
                 }
                 $.demo.submittedCount += 1
             }
@@ -75,6 +42,50 @@ function getFlights() {
     })
 
     setTimeout(function() {getFlights();}, $.demo.refreshRate);
+}
+
+function toStreamedRow(flight) {
+    var row = [];
+    row.push('<tr>')
+    row.push('<td>');     row.push(flight.rowId);                   row.push('</td>');
+    row.push('<td>Jan '); row.push(flight.dayOfMonth);              row.push('</td>');
+    row.push('<td>');     row.push(flight.carrier);                 row.push('</td>');
+    row.push('<td>');     row.push(flight.origin);                  row.push('</td>');
+    row.push('<td>');     row.push(flight.destination);             row.push('</td>');
+    row.push('<td>');     row.push(flight.scheduledDepartureTime);  row.push('</td>');
+    row.push('<td>');     row.push(flight.scheduledArrivalTime);    row.push('</td>');
+    row.push('<td>');     row.push(flight.departureDelayMinutes);   row.push('</td>');
+    if ((flight.prediction == "0" && flight.departureDelayMinutes <= $.demo.delayedMinutes) ||
+        (flight.prediction == "1" && flight.departureDelayMinutes > $.demo.delayedMinutes)) {
+        row.push('<td class="success center-text">Correct');
+    } else {
+        row.push('<td class="warning center-text">Incorrect');
+    }
+    row.push('</td>');
+    row.push('</tr>');
+    var combinedRow = row.join("");
+    return combinedRow;
+}
+
+function toSubmittedRow(flight) {
+    var row = [];
+    row.push('<tr>')
+    row.push('<td>'); row.push(flight.rowId);                   row.push('</td>');
+    row.push('<td>'); row.push(flight.dayOfMonth);              row.push('</td>');
+    row.push('<td>'); row.push(flight.carrier);                 row.push('</td>');
+    row.push('<td>'); row.push(flight.origin);                  row.push('</td>');
+    row.push('<td>'); row.push(flight.destination);             row.push('</td>');
+    row.push('<td>'); row.push(flight.scheduledDepartureTime);  row.push('</td>');
+    row.push('<td>'); row.push(flight.scheduledArrivalTime);    row.push('</td>');
+    if (flight.prediction == "0") {
+        row.push('<td class="success center-text">On time');
+    } else {
+        row.push('<td class="warning center-text">Delay');
+    }
+    row.push('</td>');
+    row.push('</tr>')
+    var combinedRow = row.join("");
+    return combinedRow;
 }
 
 function submitFlight() {
