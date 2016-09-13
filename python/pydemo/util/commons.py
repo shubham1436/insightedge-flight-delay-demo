@@ -3,7 +3,6 @@ from pyspark.mllib.linalg import Vectors
 
 
 IE_FORMAT = "org.apache.spark.sql.insightedge"
-DF_PREFIX = "org.insightedge.pythondemo"
 
 
 class Flight(object):

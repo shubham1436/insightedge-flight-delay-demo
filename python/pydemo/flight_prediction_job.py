@@ -5,51 +5,7 @@ from pyspark.sql import SQLContext
 from pyspark.streaming import StreamingContext
 from pyspark.streaming.kafka import KafkaUtils
 
-from util.commons import DF_PREFIX, IE_FORMAT, Utils
-
-'''
-bin/zookeeper-server-start.sh config/zookeeper.properties
-bin/kafka-server-start.sh config/server.properties
-bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic test
-
-
-
-Run simple kafka file producer from terminal
-awk 'function randint(n) { return int(n * rand()) } { print NR "," randint(2) "," $0; system("sleep 2");}'  /code/insightedge-pyhton-demo/data/testData3/part-00000 | bin/kafka-console-producer.sh --broker-list localhost:9092 --topic flights
-awk '{ print NR ",1," $0; system("sleep 2");}'  /code/insightedge-pyhton-demo/data/testData3/part-00000 | bin/kafka-console-producer.sh --broker-list localhost:9092 --topic flights
-cat  /code/insightedge-pyhton-demo/data/testData3/part-00000 | bin/kafka-console-producer.sh --broker-list localhost:9092 --topic flights
-awk '{ print $0; system("sleep 1");}'  /code/insightedge-pyhton-demo/data/rita2014jan.csv | bin/kafka-console-producer.sh --broker-list localhost:9092 --topic flights
-
-Show correct-incorrect ration in Zeppelin
-
-%pyspark
-gridDf = sqlContext.read.format("org.apache.spark.sql.insightedge").option("collection", "FlightWithPrediction").load()
-gridDf.registerTempTable("FlightWithPrediction")
-
-%sql
-select count(*)
-from FlightWithPrediction
-where prediction = actual
-
-%sql
-select count(*)
-from FlightWithPrediction
-where prediction <> actual
-
-%sql
-select
-    (case when prediction = actual then 'Correct' ELSE 'Incorrect' END) as predicted,
-    count(prediction) as count
-from FlightWithPrediction
-group by prediction, actual
-
-%sql
-select day_of_month as day, origin, destination, distance, carrier,
-departure_delay_minutes as actual_delay_minutes,
-(case when prediction = actual then 'Correct' ELSE 'Incorrect' END) as prediction
-FROM FlightWithPrediction
-
-'''
+from util.commons import IE_FORMAT, Utils
 
 
 def load_mapping(mapping_name, sqlc):
