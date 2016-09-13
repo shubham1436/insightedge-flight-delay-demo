@@ -3,29 +3,21 @@ package controllers
 import java.util.Properties
 
 import kafka.producer.{KeyedMessage, Producer, ProducerConfig}
-import model.{FlightEvent, ShortFlight, SubmittedFlight}
+import model.grid.Flight
+import model.kafka.FlightEvent
+import model.web.SubmittedFlight
 import play.api.libs.json._
 import play.api.mvc._
 
 object KafkaEndpoint extends Controller {
 
-  implicit val flightsReader = Json.reads[ShortFlight]
+  implicit val flightsReader = Json.reads[Flight]
   implicit val submittedFlightsReader = Json.reads[SubmittedFlight]
 
   def submitFlight = Action(parse.json) { request =>
     parseJson(request) { flight: SubmittedFlight =>
       val rowId = flight.rowId.toLong
-      val event = FlightEvent(
-        rowId,
-        flight.dayOfMonth,
-        flight.dayOfWeek,
-        flight.carrier,
-        flight.origin,
-        flight.destination,
-        flight.scheduledDepartureTime,
-        flight.scheduledArrivalTime,
-        flight.crsElapsedFlightMinutes
-      )
+      val event = FlightEvent(rowId, flight)
       send(event.toString(), "flights")
       Created(rowId.toString)
     }
@@ -51,6 +43,5 @@ object KafkaEndpoint extends Controller {
   lazy val producer = new Producer[String, String](new ProducerConfig(kafkaConfig))
 
   private def send(message: String, topic: String) = producer.send(new KeyedMessage[String, String](topic, message))
-
 
 }
