@@ -27,7 +27,7 @@ export KAFKA_HOME="path/to/kafka"
 9. Run web application `sbt web/run`
 
 10. Investigate results
-   - in Zeppelin(http://127.0.0.1:8090), import a (notebook)[https://github.com/InsightEdge/insightedge-python-demo/blob/master/zeppelin/InsightEdge%20Python%20API%20Demo.json] 
+   - in Zeppelin(http://127.0.0.1:8090), import a [notebook](https://github.com/InsightEdge/insightedge-python-demo/blob/master/zeppelin/InsightEdge%20Python%20API%20Demo.json) 
    - in web app(http://localhost:9000)
 
 - To shutdown InsightEdge run `$INSIGHTEDGE_HOME/sbin/insightedge.sh --mode shutdown`
