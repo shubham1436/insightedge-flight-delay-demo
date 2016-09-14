@@ -4,7 +4,7 @@
 
 ./scripts/python-zip-utils.sh
 
-CURRENT_FOLDER=`pwd`"/data/test"
+CURRENT_FOLDER=`pwd`
 
 echo "-- Submitting model training Spark job"
 $INSIGHTEDGE_HOME/bin/insightedge-submit \

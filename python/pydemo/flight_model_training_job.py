@@ -22,7 +22,8 @@ if __name__ == "__main__":
     sc = SparkContext(appName="InsightEdge Python API Demo: train model")
     sqlc = SQLContext(sc)
 
-    text_rdd = sc.textFile("/code/insightedge-pyhton-demo/data/flights_jan_2014.csv")
+    current_folder = sys.argv[1]
+    text_rdd = sc.textFile(current_folder + "/data/flights_jan_2014.csv")
     all_flights_rdd = text_rdd.map(lambda r: Utils.parse_flight(r))
 
     # TODO broadcast variables
@@ -61,5 +62,5 @@ if __name__ == "__main__":
     print("Test Error = {0}".format(testErr))
 
     # Save test data
-    test_data_output = sys.argv[1]
+    test_data_output = current_folder + "/data/test"
     test_rdd.coalesce(1, True).saveAsTextFile(test_data_output)

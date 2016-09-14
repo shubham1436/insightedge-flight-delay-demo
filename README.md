@@ -3,7 +3,7 @@
 Python API demo: real time flights delay prediction
 
 ### Running demo
-Before running the demo you need to install [Maven](http://www.scala-sbt.org/), [Sbt](http://www.scala-sbt.org/), [Kafka](http://kafka.apache.org/) and [Numpy???](http://www.numpy.org/).
+Before running the demo you need to install [Maven](http://www.scala-sbt.org/), [Sbt](http://www.scala-sbt.org/), [Kafka](http://kafka.apache.org/) and [Numpy](http://www.numpy.org/).
 
 1. Get into demo folder `cd path/to/insightedge-python-demo`
 
