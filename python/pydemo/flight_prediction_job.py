@@ -28,7 +28,6 @@ def predict_and_save(rdd):
         print("Could not process rdd")
 
 
-
 def to_row():
     return lambda t: Row(actual=t[0][0],
                          prediction=t[0][1],
@@ -54,7 +53,7 @@ def to_row():
 
 
 if __name__ == "__main__":
-    sc = SparkContext(appName="Flight delay prediction job")
+    sc = SparkContext(appName="InsightEdge Python API Demo: prediction job")
     ssc = StreamingContext(sc, 3)
     sqlc = SQLContext(sc)
 

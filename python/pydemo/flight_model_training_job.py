@@ -19,7 +19,7 @@ def save_mapping(mapping, name, sqlc):
 
 
 if __name__ == "__main__":
-    sc = SparkContext(appName="InsightEdge Python API example: train model")
+    sc = SparkContext(appName="InsightEdge Python API Demo: train model")
     sqlc = SQLContext(sc)
 
     text_rdd = sc.textFile("/code/insightedge-pyhton-demo/data/flights_jan_2014.csv")
