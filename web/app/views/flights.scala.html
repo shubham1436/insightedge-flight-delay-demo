@@ -1,7 +1,20 @@
 @(message: String)(implicit request:RequestHeader)
 
 @main("flights") {
-<div class="container">
+
+<div class="container" style="clear: left">
+    <div class="well">
+        <h1>InsightEdge Python API Demo</h1>
+        <p>
+            Spark streaming application does flight delay prediction and displays predictions from Kafka stream.
+        </p>
+        <p>
+            First part of the application is flight prediction based on user input. Enter needed values into the inputs and click 'Predict'. Input data will be sent to the Kafka topic and processed by trained model. Later you will see a prediction in 'Submitted flights' table.
+        </p>
+        <p>
+            Second part is showing flights prediction in the 'Streamed flights'. Data is sent to the Kafka topic previously at the 8th step of README file.
+        </p>
+    </div>
     <div class="row">
         <div class="col-md-2">
             <label for="mday">Day of month</label>
