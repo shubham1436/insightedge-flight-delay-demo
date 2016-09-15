@@ -17,7 +17,10 @@ def predict_and_save(rdd):
     try:
         if not rdd.isEmpty():
             parsed_flights = rdd.map(Utils.parse_grid_flight)
-            labeled_points = parsed_flights.map(lambda flight: Utils.create_labeled_point(flight, carrier_mapping, origin_mapping, destination_mapping))
+            labeled_points = parsed_flights.map(lambda flight: Utils.create_labeled_point(flight,
+                                                                                          carrier_mapping.value,
+                                                                                          origin_mapping.value,
+                                                                                          destination_mapping.value))
 
             predictions = model.predict(labeled_points.map(lambda x: x.features))
             labels_and_predictions = labeled_points.map(lambda lp: lp.label).zip(predictions).zip(parsed_flights).map(to_row())
@@ -62,9 +65,9 @@ if __name__ == "__main__":
 
     model = DecisionTreeModel(Utils.load_model_from_grid(sc))
 
-    carrier_mapping = load_mapping("CarrierMap", sqlc)
-    origin_mapping = load_mapping("OriginMap", sqlc)
-    destination_mapping = load_mapping("DestinationMap", sqlc)
+    carrier_mapping = sc.broadcast(load_mapping("CarrierMap", sqlc))
+    origin_mapping = sc.broadcast(load_mapping("OriginMap", sqlc))
+    destination_mapping = sc.broadcast(load_mapping("DestinationMap", sqlc))
 
     kvs = KafkaUtils.createStream(ssc, zkQuorum, "spark-streaming-consumer", {topic: 1})
     lines = kvs.map(lambda x: x[1])
