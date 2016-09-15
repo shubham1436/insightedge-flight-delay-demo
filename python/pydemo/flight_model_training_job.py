@@ -50,7 +50,7 @@ if __name__ == "__main__":
     model = DecisionTree.trainClassifier(training_data, classes_count, categorical_features_info,
                                          impurity, max_depth, max_bins)
 
-    Utils.save_model_to_grid(model, sc)
+    Utils.save_model_to_grid(model, "DecisionTreeFlightModel", sc)
     save_mapping(carrier_mapping.value, "CarrierMap", sqlc)
     save_mapping(origin_mapping.value, "OriginMap", sqlc)
     save_mapping(destination_mapping.value, "DestinationMap", sqlc)

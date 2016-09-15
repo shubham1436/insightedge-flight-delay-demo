@@ -26,29 +26,14 @@ class Flight(object):
         self.crs_elapsed_flight_minutes = crs_elapsed_flight_minutes
         self.distance = distance
 
-#TODO
-class GridFlight(object):
-    def __init__(self, number, streamed, day_of_month, day_of_week, carrier, tail_number, flight_number, origin_id, origin, destination_id, destination, scheduled_departure_time, actual_departure_time,
+
+class GridFlight(Flight):
+    def __init__(self, row_id, streamed, day_of_month, day_of_week, carrier, tail_number, flight_number, origin_id, origin, destination_id, destination, scheduled_departure_time, actual_departure_time,
                  departure_delay_minutes, scheduled_arrival_time, actual_arrival_time, arrival_delay_minutes, crs_elapsed_flight_minutes, distance):
-        self.row_id = number
+        Flight.__init__(self, day_of_month, day_of_week, carrier, tail_number, flight_number, origin_id, origin, destination_id, destination, scheduled_departure_time, actual_departure_time,
+                                     departure_delay_minutes, scheduled_arrival_time, actual_arrival_time, arrival_delay_minutes, crs_elapsed_flight_minutes, distance)
+        self.row_id = row_id
         self.streamed = streamed
-        self.day_of_month = day_of_month
-        self.day_of_week = day_of_week
-        self.carrier = carrier
-        self.tail_number = tail_number
-        self.flight_number = flight_number
-        self.origin_id = origin_id
-        self.origin = origin
-        self.destination_id = destination_id
-        self.destination = destination
-        self.scheduled_departure_time = scheduled_departure_time
-        self.actual_departure_time = actual_departure_time
-        self.departure_delay_minutes = departure_delay_minutes
-        self.scheduled_arrival_time = scheduled_arrival_time
-        self.actual_arrival_time = actual_arrival_time
-        self.arrival_delay_minutes = arrival_delay_minutes
-        self.crs_elapsed_flight_minutes = crs_elapsed_flight_minutes
-        self.distance = distance
 
 
 class Utils(object):
@@ -80,14 +65,14 @@ class Utils(object):
         return LabeledPoint(delayed, Vectors.dense(day_of_month, day_of_week, scheduled_departure_time, scheduled_arrival_time, carrier, crs_elapsed_flight_minutes, origin, destination))
 
     @staticmethod
-    def save_model_to_grid(model, sc):
+    def save_model_to_grid(model, name, sc):
         python_context = sc._jvm.java.lang.Thread.currentThread().getContextClassLoader().loadClass("org.insightedge.pythondemo.PythonInsightEdgeSparkContext").newInstance()
         python_context.init(sc._jsc)
-        python_context.saveMlInstance("DecisionTreeFlightModel", model._java_model)
+        python_context.saveMlInstance(name, model._java_model)
 
 
     @staticmethod
-    def load_model_from_grid(sc):
+    def load_model_from_grid(name, sc):
         python_context = sc._jvm.java.lang.Thread.currentThread().getContextClassLoader().loadClass("org.insightedge.pythondemo.PythonInsightEdgeSparkContext").newInstance()
         python_context.init(sc._jsc)
-        return python_context.loadMlInstance("DecisionTreeFlightModel", "org.apache.spark.mllib.tree.model.DecisionTreeModel")
+        return python_context.loadMlInstance(name, "org.apache.spark.mllib.tree.model.DecisionTreeModel")

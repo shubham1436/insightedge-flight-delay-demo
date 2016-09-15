@@ -8,10 +8,10 @@ Before running the demo you need to install [Maven](http://www.scala-sbt.org/), 
 1. Get into demo folder `cd path/to/insightedge-python-demo`
 
 2. Set INSIGHTEDGE_HOME and KAFKA_HOME env vars
-```bash
-export INSIGHTEDGE_HOME="path/to/insightedge"
-export KAFKA_HOME="path/to/kafka"
-```
+   ```bash
+   export INSIGHTEDGE_HOME="path/to/insightedge"
+   export KAFKA_HOME="path/to/kafka"
+   ```
 3. Install InsightEdge into maven repo `$INSIGHTEDGE_HOME/sbin/insightedge-maven.sh`
 
 4. Launch InsightEdge `$INSIGHTEDGE_HOME/sbin/insightedge.sh --mode demo`

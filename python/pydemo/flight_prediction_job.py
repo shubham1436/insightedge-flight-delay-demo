@@ -63,7 +63,7 @@ if __name__ == "__main__":
     zkQuorum = "localhost:2181"
     topic = "flights"
 
-    model = DecisionTreeModel(Utils.load_model_from_grid(sc))
+    model = DecisionTreeModel(Utils.load_model_from_grid("DecisionTreeFlightModel", sc))
 
     carrier_mapping = sc.broadcast(load_mapping("CarrierMap", sqlc))
     origin_mapping = sc.broadcast(load_mapping("OriginMap", sqlc))
