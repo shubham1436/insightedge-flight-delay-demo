@@ -1,6 +1,8 @@
 from __future__ import print_function
 
 import sys
+import shutil
+import os
 
 from pyspark import Row
 from pyspark import SparkContext
@@ -68,4 +70,6 @@ if __name__ == "__main__":
 
     # Save test data
     test_data_output = current_folder + "/data/test"
+    if os.path.exists(test_data_output):
+        shutil.rmtree(test_data_output)
     test_rdd.coalesce(1, True).saveAsTextFile(test_data_output)
