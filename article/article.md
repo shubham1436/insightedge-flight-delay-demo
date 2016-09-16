@@ -44,19 +44,22 @@ test_rdd.coalesce(1, True).saveAsTextFile(...)
 ```python
 all_flights_rdd = text_rdd.map(lambda r: Utils.parse_flight(r))
 
-carrier_mapping = dict(all_flights_rdd.map(lambda flight: flight.carrier).distinct().zipWithIndex().collect())
-origin_mapping = dict(all_flights_rdd.map(lambda flight: flight.origin).distinct().zipWithIndex().collect())
-destination_mapping = dict(all_flights_rdd.map(lambda flight: flight.destination).distinct().zipWithIndex().collect())
+carrier_mapping = sc.broadcast(dict(all_flights_rdd.map(lambda flight: flight.carrier).distinct().zipWithIndex().collect()))
+origin_mapping = sc.broadcast(dict(all_flights_rdd.map(lambda flight: flight.origin).distinct().zipWithIndex().collect()))
+destination_mapping = sc.broadcast(dict(all_flights_rdd.map(lambda flight: flight.destination).distinct().zipWithIndex().collect()))
 
 sqlc = SQLContext(sc)
-save_mapping(carrier_mapping, DF_SUFFIX + ".CarrierMap", sqlc)
-save_mapping(origin_mapping, DF_SUFFIX + ".OriginMap", sqlc)
-save_mapping(destination_mapping, DF_SUFFIX + ".DestinationMap", sqlc)
+save_mapping(carrier_mapping.value, "CarrierMap", sqlc)
+save_mapping(origin_mapping.value, "OriginMap", sqlc)
+save_mapping(destination_mapping.value, "DestinationMap", sqlc)
 ```
 
 * Last step is to train a model and save it to the data grid
 ```python
-training_data = training_rdd.map(Utils.parse_flight).map(lambda rdd: Utils.create_labeled_point(rdd, carrier_mapping, origin_mapping, destination_mapping))
+training_data = training_rdd.map(Utils.parse_flight).map(lambda rdd: Utils.create_labeled_point(rdd,
+                                                                                                carrier_mapping.value,
+                                                                                                origin_mapping.value,
+                                                                                                destination_mapping.value))
 classes_count = 2
 impurity = "gini"
 max_depth = 9
@@ -73,13 +76,13 @@ Let's see main steps:
 
 * Load models and mappings form data grid
 ```python
-sc = SparkContext(appName="Flight delay prediction job")
+sc = SparkContext(appName="InsightEdge Python API Demo: prediction job")
 model = DecisionTreeModel(Utils.load_model_from_grid(sc))
 
 sqlc = SQLContext(sc)
-carrier_mapping = load_mapping(DF_SUFFIX + ".CarrierMap", sqlc)
-origin_mapping = load_mapping(DF_SUFFIX + ".OriginMap", sqlc)
-destination_mapping = load_mapping(DF_SUFFIX + ".DestinationMap", sqlc)
+carrier_mapping = sc.broadcast(load_mapping("CarrierMap", sqlc))
+origin_mapping = sc.broadcast(load_mapping("OriginMap", sqlc))
+destination_mapping = sc.broadcast(load_mapping("DestinationMap", sqlc))
 ```
 
 * Open Kafka stream and parse lines with flight data
@@ -96,7 +99,10 @@ lines.foreachRDD(predict_and_save)
 def predict_and_save(rdd):
     if not rdd.isEmpty():
         parsed_flights = rdd.map(Utils.parse_flight)
-        labeled_points = parsed_flights.map(lambda flight: Utils.create_labeled_point(flight, carrier_mapping, origin_mapping, destination_mapping))
+        labeled_points = parsed_flights.map(lambda flight: Utils.create_labeled_point(flight,
+                                                                                      carrier_mapping.value,
+                                                                                      origin_mapping.value,
+                                                                                      destination_mapping.value))
 
         predictions = model.predict(labeled_points.map(lambda x: x.features))
         labels_and_predictions = labeled_points.map(lambda lp: lp.label).zip(predictions).zip(parsed_flights).map(to_row())
