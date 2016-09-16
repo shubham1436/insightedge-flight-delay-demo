@@ -122,7 +122,7 @@ After all steps are done we can examine what was stored in the data grid. Open Z
 Below you can see example of stored data where:
 * day - is day of the month
 * origin - origin airport
-* destionation - destination airport
+* destination - destination airport
 * distance - distance between airports in miles
 * carrier - airline company
 * actual_delay_minutes - actual flight delay in minutes
@@ -132,6 +132,8 @@ Below you can see example of stored data where:
 Since we store prediction result alongside with actual flight delay we can see ratio of correct and incorrect predictions:
 ![Prediction ratio](img/ratio_predictions.png)
 
+Additionally you can run web application and observe result of the streaming application or submit flight for prediction manually:
+![Demo web application](img/web_app.png)
 ### What's next?
 
 In this article we built simple real time prediction application using Spark ML combined with Spark Streaming on top of InsightEdge. We haven't built perfect solution and there are ways to improve it, eg:

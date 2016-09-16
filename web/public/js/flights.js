@@ -106,7 +106,7 @@ function toSubmittedRow(flight) {
     var row = [];
     row.push('<tr>')
     row.push('<td>'); row.push(flight.rowId);       row.push('</td>');
-    row.push('<td>'); row.push(flight.dayOfMonth);  row.push('</td>');
+    row.push('<td>Jan '); row.push(flight.dayOfMonth);  row.push('</td>');
     row.push('<td>'); row.push(flight.carrier);     row.push('</td>');
     row.push('<td>'); row.push(flight.origin);      row.push('</td>');
     row.push('<td>'); row.push(flight.destination); row.push('</td>');
