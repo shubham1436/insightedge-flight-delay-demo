@@ -19,6 +19,7 @@ object grid {
                      departureDelayMinutes: String,
                      scheduledArrivalTime: String,
                      crsElapsedFlightMinutes: String,
+					 windSpeed: String,
                      prediction: Double
                    )
 
@@ -35,7 +36,8 @@ object kafka {
                           destination: String,
                           scheduledDepartureTime: String,
                           scheduledArrivalTime: String,
-                          crsElapsedFlightMinutes: String
+                          crsElapsedFlightMinutes: String,
+						  windSpeed: String
                         ) {
     override def toString: String = {
       s"$rowId," +
@@ -56,7 +58,8 @@ object kafka {
         s"," + //actual_arrival_time
         s"," + //arrival_delay_minutes
         s"$crsElapsedFlightMinutes," +
-        s"" //distance
+        s"" + //distance
+		s"$windSpeed"
     }
 
   }
@@ -72,7 +75,8 @@ object kafka {
         flight.destination,
         flight.scheduledDepartureTime,
         flight.scheduledArrivalTime,
-        flight.crsElapsedFlightMinutes
+        flight.crsElapsedFlightMinutes,
+		flight.windSpeed
       )
     }
   }
@@ -89,7 +93,8 @@ object web {
                               destination: String,
                               scheduledDepartureTime: String,
                               scheduledArrivalTime: String,
-                              crsElapsedFlightMinutes: String
+                              crsElapsedFlightMinutes: String,
+							  windSpeed: String
                             )
 
 }

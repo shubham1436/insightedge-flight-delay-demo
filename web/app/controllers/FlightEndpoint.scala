@@ -49,6 +49,7 @@ object FlightEndpoint extends Controller {
       sd.getProperty[String]("departure_delay_minutes"),
       sd.getProperty[String]("scheduled_arrival_time"),
       sd.getProperty[String]("crs_elapsed_flight_minutes"),
+	  sd.getProperty[String]("wind_speed"),
       sd.getProperty[Double]("prediction")
     )
   }

@@ -25,8 +25,14 @@ if __name__ == "__main__":
     sqlc = SQLContext(sc)
 
     current_folder = sys.argv[1]
-    text_rdd = sc.textFile(current_folder + "/data/flights_jan_2014.csv")
-    all_flights_rdd = text_rdd.map(lambda r: Utils.parse_flight(r))
+    flight_rdd = sc.textFile(current_folder + "/data/flights_jan_2014.csv")
+    all_flights_rdd = flight_rdd.map(lambda r: Utils.parse_flight(r))
+
+    weather_file_rdd = sc.textFile(current_folder + "/data/weather_jan_2014.csv")
+    all_weather_rdd = weather_file_rdd.map(lambda r: Utils.parse_weather(r))
+
+    text_rdd =  all_flights_rdd..map(lambda r => ((r.day_of_month, r.scheduled_departure_time, r.origin_id), r))
+        .join(all_weather_rdd.map (lambda r => ((r.day, r.time, r.airport_id), r))))
 
     carrier_mapping = sc.broadcast(dict(all_flights_rdd.map(lambda flight: flight.carrier).distinct().zipWithIndex().collect()))
     origin_mapping = sc.broadcast(dict(all_flights_rdd.map(lambda flight: flight.origin).distinct().zipWithIndex().collect()))
@@ -40,10 +46,7 @@ if __name__ == "__main__":
 
     splits = text_rdd.randomSplit([0.7, 0.3])
     (training_rdd, test_rdd) = (splits[0], splits[1])
-    training_data = training_rdd.map(Utils.parse_flight).map(lambda rdd: Utils.create_labeled_point(rdd,
-                                                                                                    carrier_mapping.value,
-                                                                                                    origin_mapping.value,
-                                                                                                    destination_mapping.value))
+    training_data = training_rdd.map(lambda rdd: Utils.create_labeled_point(rdd, carrier_mapping.value, origin_mapping.value, destination_mapping.value))
 
     classes_count = 2
     impurity = "gini"
@@ -58,8 +61,7 @@ if __name__ == "__main__":
     save_mapping(destination_mapping.value, "DestinationMap", sqlc)
 
     # Test model
-    test_data = test_rdd.map(lambda r: Utils.parse_flight(r)) \
-        .map(lambda rdd: Utils.create_labeled_point(rdd,
+    test_data = test_rdd.map(lambda rdd: Utils.create_labeled_point(rdd,
                                                     carrier_mapping.value,
                                                     origin_mapping.value,
                                                     destination_mapping.value))
