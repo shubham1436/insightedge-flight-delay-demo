@@ -90,7 +90,6 @@ function toStreamedRow(flight) {
         row.push(addColon(flight.scheduledArrivalTime));
     row.push('</td>');
     row.push('<td>');     row.push(flight.departureDelayMinutes);   row.push('</td>');
-    row.push('<td>');     row.push(flight.windSpeed);  row.push('</td>'); //d
     if ((flight.prediction == "0" && flight.departureDelayMinutes <= $.demo.delayedMinutes) ||
         (flight.prediction == "1" && flight.departureDelayMinutes > $.demo.delayedMinutes)) {
         row.push('<td class="success center-text">Correct');
@@ -117,7 +116,6 @@ function toSubmittedRow(flight) {
     row.push('<td>');
         row.push(addColon(flight.scheduledArrivalTime));
      row.push('</td>');
-    row.push('<td>');   row.push(flight.windSpeed);   row.push('</td>');
     if (!flight.hasOwnProperty('prediction')) {
         id = 'submitted_fight_' + flight.rowId
         row.push('<td class="center-text" id=' + id + '>Pending...');
@@ -150,8 +148,7 @@ function submitFlight() {
                                          destination: $('#destination').val(),
                                          scheduledDepartureTime: $('#departureTime').val(),
                                          scheduledArrivalTime: $('#arrivalTime').val(),
-                                         crsElapsedFlightMinutes: $('#crsFlightTime').val(),
-					 windSpeed: $('#windSpeed').val()
+                                         crsElapsedFlightMinutes: $('#crsFlightTime').val()
                                         });
     var flight = JSON.parse(flightToSubmit)
     $.ajax({

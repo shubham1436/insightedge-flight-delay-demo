@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#./scripts/python-zip-utils.sh
+./scripts/python-zip-utils.sh
 
 echo "-- Submitting prediction spark job"
 LOGS=$INSIGHTEDGE_HOME/logs/python-demo-prediction.log

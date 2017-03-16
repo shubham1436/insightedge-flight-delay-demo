@@ -58,7 +58,7 @@ object kafka {
         s"," + //actual_arrival_time
         s"," + //arrival_delay_minutes
         s"$crsElapsedFlightMinutes," +
-        s"" + //distance
+        s"," + //distance
 		s"$windSpeed"
     }
 

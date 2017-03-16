@@ -52,7 +52,8 @@ def to_row():
                          actual_arrival_time=t[1].actual_arrival_time,
                          arrival_delay_minutes=t[1].arrival_delay_minutes,
                          crs_elapsed_flight_minutes=t[1].crs_elapsed_flight_minutes,
-                         distance=t[1].distance)
+                         distance=t[1].distance,
+                         wind_speed=t[1].wind_speed)
 
 
 if __name__ == "__main__":

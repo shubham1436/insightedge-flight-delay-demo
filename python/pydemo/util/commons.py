@@ -56,6 +56,28 @@ class Weather(object):
         self.hourly_precip = hourly_precip
         self.altimeter = altimeter
 
+class FlightWithWeather(object):
+    def __init__(self, day_of_month, day_of_week, carrier, tail_number, flight_number, origin_id, origin, destination_id, destination, scheduled_departure_time, actual_departure_time,
+                 departure_delay_minutes, scheduled_arrival_time, actual_arrival_time, arrival_delay_minutes, crs_elapsed_flight_minutes, distance, wind_speed):
+        self.day_of_month = day_of_month
+        self.day_of_week = day_of_week
+        self.carrier = carrier
+        self.tail_number = tail_number
+        self.flight_number = flight_number
+        self.origin_id = origin_id
+        self.origin = origin
+        self.destination_id = destination_id
+        self.destination = destination
+        self.scheduled_departure_time = scheduled_departure_time
+        self.actual_departure_time = actual_departure_time
+        self.departure_delay_minutes = departure_delay_minutes
+        self.scheduled_arrival_time = scheduled_arrival_time
+        self.actual_arrival_time = actual_arrival_time
+        self.arrival_delay_minutes = arrival_delay_minutes
+        self.crs_elapsed_flight_minutes = crs_elapsed_flight_minutes
+        self.distance = distance
+        self.wind_speed = wind_speed
+
 
 class GridFlight(Flight):
     def __init__(self, row_id, streamed, day_of_month, day_of_week, carrier, tail_number, flight_number, origin_id, origin, destination_id, destination, scheduled_departure_time, actual_departure_time,
@@ -76,12 +98,17 @@ class Utils(object):
     @staticmethod
     def parse_weather(data):
         line = data.split(',')
-        return Flight(line[0], line[1], line[2], line[3], line[4], line[5], line[6], line[7], line[8], line[9], line[10], line[11], line[12], line[13], line[14], line[15], line[16], line[17], line[18], line[19], line[20], line[21], line[22], line[23], line[24], line[25])
+        return Weather(line[0], line[1], line[2], line[3], line[4], line[5], line[6], line[7], line[8], line[9], line[10], line[11], line[12], line[13], line[14], line[15], line[16], line[17], line[18], line[19], line[20], line[21], line[22], line[23], line[24], line[25])
 
     @staticmethod
     def parse_grid_flight(data):
         line = data.split(',')
         return GridFlight(line[0], line[1], line[2], line[3], line[4], line[5], line[6], line[7], line[8], line[9], line[10], line[11], line[12], line[13], line[14], line[15], line[16], line[17], line[18], line[19])
+    
+    @staticmethod
+    def parse_flight_weather(flight, weather):
+        return FlightWithWeather(flight.day_of_month, flight.day_of_week, flight.carrier, flight.tail_number, flight.flight_number, flight.origin_id, flight.origin, flight.destination_id, flight.destination, flight.scheduled_departure_time, flight.actual_departure_time,
+                 flight.departure_delay_minutes, flight.scheduled_arrival_time, flight.actual_arrival_time, flight.arrival_delay_minutes, flight.crs_elapsed_flight_minutes, flight.distance, weather.wind_speed)
 
     @staticmethod
     def create_labeled_point(flight, carrier_mapping, origin_mapping, destination_mapping):
@@ -93,7 +120,10 @@ class Utils(object):
         crs_elapsed_flight_minutes = float(flight.crs_elapsed_flight_minutes)
         origin = origin_mapping[flight.origin]
         destination = destination_mapping[flight.destination]
-        wind_speed = flight.wind_speed
+	if flight.wind_speed is None:
+            wind_speed = 13.6 
+        else:
+            wind_speed = float(flight.wind_speed)
         if int(flight.departure_delay_minutes) > 40:
             delayed = 1.0
         else:

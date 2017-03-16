@@ -31,8 +31,8 @@ if __name__ == "__main__":
     weather_file_rdd = sc.textFile(current_folder + "/data/weather_jan_2014.csv")
     all_weather_rdd = weather_file_rdd.map(lambda r: Utils.parse_weather(r))
 
-    text_rdd =  all_flights_rdd..map(lambda r => ((r.day_of_month, r.scheduled_departure_time, r.origin_id), r))
-        .join(all_weather_rdd.map (lambda r => ((r.day, r.time, r.airport_id), r))))
+    text_rdd =  (all_flights_rdd.map(lambda r: ((r.day_of_month, r.scheduled_departure_time, r.origin_id), r))
+        .join(all_weather_rdd.map (lambda r: ((r.day, r.time, r.airport_id), r)))).map(lambda (k, (v1, v2)): Utils.parse_flight_weather(v1, v2))
 
     carrier_mapping = sc.broadcast(dict(all_flights_rdd.map(lambda flight: flight.carrier).distinct().zipWithIndex().collect()))
     origin_mapping = sc.broadcast(dict(all_flights_rdd.map(lambda flight: flight.origin).distinct().zipWithIndex().collect()))
